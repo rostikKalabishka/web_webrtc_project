@@ -8,6 +8,10 @@
 	<string>Webrtc Flutter</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>NSCameraUsageDescription</key>
+<string>$(webrtc_flutter) Camera Usage!</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>$(webrtc_flutter) Microphone Usage!</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>

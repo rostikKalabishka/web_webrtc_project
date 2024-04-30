@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class CustomTextField extends StatelessWidget {
   const CustomTextField({
     super.key,
-    required this.nameController,
+    required this.controller,
   });
 
-  final TextEditingController nameController;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class CustomTextField extends StatelessWidget {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
           )),
-      controller: nameController,
+      controller: controller,
     );
   }
 }

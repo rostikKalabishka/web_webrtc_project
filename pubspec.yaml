@@ -37,6 +37,7 @@ dependencies:
   flutter_webrtc: ^0.10.3
   socket_io_client: ^2.0.3+1
   flutter_bloc: ^8.1.5
+  auto_route: ^7.8.4
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +49,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner: ^2.4.6
+  auto_route_generator: ^7.3.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

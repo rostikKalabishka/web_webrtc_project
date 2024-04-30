@@ -11,10 +11,12 @@ class HomeScreenMobile extends StatefulWidget {
 
 class _HomeScreenMobileState extends State<HomeScreenMobile> {
   late TextEditingController nameController;
+  late TextEditingController urlController;
 
   @override
   void initState() {
     nameController = TextEditingController();
+    urlController = TextEditingController();
     super.initState();
   }
 
@@ -34,7 +36,30 @@ class _HomeScreenMobileState extends State<HomeScreenMobile> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: CustomTextField(nameController: nameController),
+                child: CustomTextField(controller: nameController),
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: 40,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: CustomTextField(controller: nameController),
+              ),
+            ),
+            const SliverToBoxAdapter(
+              child: SizedBox(
+                height: 40,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: CustomButton(
+                color: Colors.grey,
+                onTap: () {},
+                child: const Text('Join'),
               ),
             )
           ],
