@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../ui/widgets/widgets.dart';
+import 'package:flutter/widgets.dart';
+import 'package:webrtc_flutter/ui/theme/image_const.dart';
+import '../widgets/login_form_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,33 +29,54 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar(
-            floating: true,
-            centerTitle: true,
-            title: Text('Login'),
-          ),
-          //  SliverToBoxAdapter(),
-          SliverToBoxAdapter(
-            child: BaseContainer(
-              height: MediaQuery.of(context).size.height * 0.5,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomTextField(
-                    controller: emailController,
-                  ),
-                  CustomTextField(
-                    controller: passwordController,
-                  )
-                ],
+    final theme = Theme.of(context);
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: true,
+              centerTitle: true,
+              title: Text(
+                'Login',
+                style: theme.textTheme.headlineMedium
+                    ?.copyWith(fontWeight: FontWeight.w700),
               ),
             ),
-          ),
-        ],
+            SliverToBoxAdapter(
+              child: AspectRatio(
+                aspectRatio: 4 / 3,
+                child: Image.asset(ImageConst.imageForAuth),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: LoginFormWidget(
+                emailController: emailController,
+                passwordController: passwordController,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    const Text('Don`t have an account? '),
+                    GestureDetector(
+                      child: const Text(
+                        'Register now',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      onTap: () {},
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
