@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:webrtc_flutter/features/auth/mobile_auth/login/view/login.dart';
 import 'package:webrtc_flutter/features/home/view/home_screen_mobile.dart';
 import 'package:webrtc_flutter/ui/theme/theme.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: theme,
-      home: const HomeScreenMobile(),
+      home: const LoginScreen(),
     );
   }
 }
