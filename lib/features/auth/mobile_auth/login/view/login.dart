@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:webrtc_flutter/ui/theme/image_const.dart';
 import '../widgets/login_form_widget.dart';
 
@@ -67,7 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     GestureDetector(
                       child: const Text(
                         'Register now',
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.bold),
                       ),
                       onTap: () {},
                     )
