@@ -4,6 +4,8 @@ import 'package:webrtc_flutter/features/auth/mobile_auth/registration/view/regis
 
 import 'package:webrtc_flutter/ui/theme/theme.dart';
 
+import 'features/list_rooms/list_rooms.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: darkTheme,
-      home: const RegistrationScreen(),
+      home: const ListRoomsScreen(),
     );
   }
 }
