@@ -2,7 +2,10 @@ import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_use
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract interface class UserRepositoryInterface {
-  Future<void> registration();
+  Future<MyUserModel> registration(
+    MyUserModel userModel,
+    String password,
+  );
 
   Future<void> singIn(String email, String password);
 
@@ -12,9 +15,9 @@ abstract interface class UserRepositoryInterface {
 
   Stream<User?> get user;
 
-  Future<void> setUserData(MyUser user);
+  Future<void> setUserData(MyUserModel user);
 
-  Future<MyUser> getMyUser(String myUserId);
+  Future<MyUserModel> getMyUser(String myUserId);
 
   Future<String> uploadPicture(String file, String userId);
 }
