@@ -34,6 +34,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   flutter_webrtc: ^0.10.3
   socket_io_client: ^2.0.3+1
+  equatable: ^2.0.5
   flutter_bloc: ^8.1.5
   auto_route: ^7.8.4
   firebase_auth: ^4.19.4
