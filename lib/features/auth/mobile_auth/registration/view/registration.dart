@@ -1,9 +1,11 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
 import 'package:webrtc_flutter/ui/theme/image_const.dart';
 
 import '../widgets/widgets.dart';
 
+@RoutePage()
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
 

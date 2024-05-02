@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396508899208",
+    "project_id": "webrtc-project-276b1",
+    "storage_bucket": "webrtc-project-276b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396508899208:android:a605f35a1208f17125bc3d",
+        "android_client_info": {
+          "package_name": "com.example.webrtc_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMMk0ad3ZNABW9eyuaVjvdloIvmlKwSDQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

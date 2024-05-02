@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyBz8oA6im6PFW96zA_cp12ZAbVOCiuZR54</string>
+	<key>GCM_SENDER_ID</key>
+	<string>396508899208</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.webrtcFlutter</string>
+	<key>PROJECT_ID</key>
+	<string>webrtc-project-276b1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>webrtc-project-276b1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:396508899208:ios:a2536aea0a57f24025bc3d</string>
+</dict>
+</plist>

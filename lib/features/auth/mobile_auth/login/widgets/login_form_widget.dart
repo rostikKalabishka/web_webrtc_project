@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:webrtc_flutter/router/router.dart';
 
 import '../../../../../ui/ui.dart';
 
@@ -31,7 +33,10 @@ class LoginFormWidget extends StatelessWidget {
               obscureText: true,
             ),
             CustomButton(
-              onTap: () {},
+              onTap: () {
+                AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
+                    predicate: (route) => false);
+              },
               color: theme.primaryColor,
               child: Text(
                 'Login',

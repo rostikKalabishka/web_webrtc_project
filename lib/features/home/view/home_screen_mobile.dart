@@ -1,7 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:webrtc_flutter/router/router.dart';
 
-import '../../../ui/widgets/widgets.dart';
-
+@RoutePage()
 class HomeScreenMobile extends StatefulWidget {
   const HomeScreenMobile({super.key});
 
@@ -22,49 +23,30 @@ class _HomeScreenMobileState extends State<HomeScreenMobile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: CustomScrollView(
-          slivers: [
-            const SliverAppBar(
-              centerTitle: true,
-              title: Text('Test WebRPC'),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: CustomTextField(controller: nameController),
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: SizedBox(
-                height: 40,
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: CustomTextField(controller: nameController),
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: SizedBox(
-                height: 40,
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: CustomButton(
-                color: Colors.grey,
-                onTap: () {},
-                child: const Text('Join'),
-              ),
-            )
-          ],
-        ),
-      ),
+    final theme = Theme.of(context);
+    return AutoTabsRouter(
+      routes: [ListRoomsRoute(), SettingsRoute()],
+      builder: (context, child) {
+        final tabsRouter = AutoTabsRouter.of(context);
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: BottomNavigationBar(
+            onTap: (index) => _openPage(index, tabsRouter),
+            currentIndex: tabsRouter.activeIndex,
+            selectedItemColor: theme.primaryColor,
+            unselectedItemColor: theme.hintColor,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings), label: 'Settings'),
+            ],
+          ),
+        );
+      },
     );
+  }
+
+  void _openPage(int index, TabsRouter tabsRouter) {
+    tabsRouter.setActiveIndex(index);
   }
 }
