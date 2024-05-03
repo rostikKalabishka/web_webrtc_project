@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/router/router.dart';
 
 import 'package:webrtc_flutter/ui/theme/image_const.dart';
+import '../../../../../blocs/sing_in_bloc/sing_in_bloc.dart';
 import '../widgets/login_form_widget.dart';
 
 @RoutePage()
@@ -16,6 +18,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
+  bool obscureText = true;
   @override
   void initState() {
     emailController = TextEditingController();
@@ -33,57 +36,66 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
+    return BlocConsumer<SingInBloc, SingInState>(
+      listener: (context, state) {
+        // TODO: implement listener
       },
-      child: Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              floating: true,
-              centerTitle: true,
-              title: Text(
-                'Login',
-                style: theme.textTheme.headlineMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: AspectRatio(
-                aspectRatio: 4 / 3,
-                child: Image.asset(ImageConst.imageForAuth),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: LoginFormWidget(
-                emailController: emailController,
-                passwordController: passwordController,
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    const Text('Don`t have an account? '),
-                    GestureDetector(
-                      child: const Text(
-                        'Register now',
-                        style: TextStyle(
-                            color: Colors.blue, fontWeight: FontWeight.bold),
-                      ),
-                      onTap: () {
-                        AutoRouter.of(context).push(RegistrationRoute());
-                      },
-                    )
-                  ],
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  floating: true,
+                  centerTitle: true,
+                  title: Text(
+                    'Login',
+                    style: theme.textTheme.headlineMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                  ),
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
+                SliverToBoxAdapter(
+                  child: AspectRatio(
+                    aspectRatio: 4 / 3,
+                    child: Image.asset(ImageConst.imageForAuth),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: LoginFormWidget(
+                    emailController: emailController,
+                    passwordController: passwordController,
+                    obscureText: obscureText,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        const Text('Don`t have an account? '),
+                        GestureDetector(
+                          child: const Text(
+                            'Register now',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onTap: () {
+                            AutoRouter.of(context).push(RegistrationRoute());
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

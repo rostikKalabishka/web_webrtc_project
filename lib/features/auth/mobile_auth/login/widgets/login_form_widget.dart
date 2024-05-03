@@ -9,10 +9,12 @@ class LoginFormWidget extends StatelessWidget {
     super.key,
     required this.emailController,
     required this.passwordController,
+    this.obscureText = true,
   });
 
   final TextEditingController emailController;
   final TextEditingController passwordController;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +29,14 @@ class LoginFormWidget extends StatelessWidget {
           children: [
             CustomTextField(
               controller: emailController,
+              hintText: 'Email',
+              keyboardType: TextInputType.emailAddress,
             ),
             CustomTextField(
+              hintText: 'Password',
               controller: passwordController,
-              obscureText: true,
+              obscureText: obscureText,
+              keyboardType: TextInputType.name,
             ),
             CustomButton(
               onTap: () {
