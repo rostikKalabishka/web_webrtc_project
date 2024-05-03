@@ -22,24 +22,24 @@ class SingInBloc extends Bloc<SingInEvent, SingInState> {
   }
 
   Future<void> _singIn(SingInRequired event, emit) async {
-    emit(SignInProcess());
+    emit(SingInProcess());
     try {
       await userRepository.singIn(event.email, event.password);
-      emit(SignInSuccess());
+      emit(SingInSuccess());
     } catch (e) {
       log(e.toString());
-      emit(SignInFailure(error: e));
+      emit(SingInFailure(error: e));
     }
   }
 
   Future<void> _singOut(SingOut event, emit) async {
-    emit(SignInProcess());
+    emit(SingInProcess());
     try {
       await userRepository.logOut();
-      emit(SignInSuccess());
+      emit(SingInSuccess());
     } catch (e) {
       log(e.toString());
-      emit(SignInFailure(error: e));
+      emit(SingInFailure(error: e));
     }
   }
 }
