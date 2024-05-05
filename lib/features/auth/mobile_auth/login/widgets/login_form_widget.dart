@@ -19,38 +19,41 @@ class LoginFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Center(
-      child: BaseContainer(
-        height: MediaQuery.of(context).size.height * 0.35,
-        margin: const EdgeInsets.all(12),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CustomTextField(
-              controller: emailController,
-              hintText: 'Email',
-              keyboardType: TextInputType.emailAddress,
-            ),
-            CustomTextField(
-              hintText: 'Password',
-              controller: passwordController,
-              obscureText: obscureText,
-              keyboardType: TextInputType.name,
-            ),
-            CustomButton(
-              onTap: () {
-                AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
-                    predicate: (route) => false);
-              },
-              color: theme.primaryColor,
-              child: Text(
-                'Login',
-                style: theme.textTheme.bodyLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
+    return Form(
+      child: Center(
+        child: BaseContainer(
+          height: MediaQuery.of(context).size.height * 0.35,
+          margin: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomTextField(
+                controller: emailController,
+                hintText: 'Email',
+                keyboardType: TextInputType.emailAddress,
               ),
-            )
-          ],
+              CustomTextField(
+                hintText: 'Password',
+                controller: passwordController,
+                obscureText: obscureText,
+                keyboardType: TextInputType.name,
+              ),
+              CustomButton(
+                onTap: () {
+                  AutoRouter.of(context).pushAndPopUntil(
+                      const HomeRouteMobile(),
+                      predicate: (route) => false);
+                },
+                color: theme.primaryColor,
+                child: Text(
+                  'Login',
+                  style: theme.textTheme.bodyLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

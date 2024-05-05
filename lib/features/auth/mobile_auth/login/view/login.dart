@@ -84,7 +84,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fontWeight: FontWeight.bold),
                           ),
                           onTap: () {
-                            AutoRouter.of(context).push(RegistrationRoute());
+                            AutoRouter.of(context)
+                                .push(const RegistrationRoute());
                           },
                         )
                       ],
