@@ -20,13 +20,11 @@ class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
   final RoomRepository roomRepository = RoomRepository();
   @override
   Widget build(BuildContext context) {
-    final authenticationBloc =
-        AuthenticationBloc(myUserRepository: userRepository);
     final singInBloc = SingInBloc(myUserRepository: userRepository);
     final signUpBloc = SignUpBloc(myUserRepository: userRepository);
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => authenticationBloc),
+        // BlocProvider(create: (_) => authenticationBloc),
         BlocProvider(create: (_) => singInBloc),
         BlocProvider(create: (_) => signUpBloc)
       ],
