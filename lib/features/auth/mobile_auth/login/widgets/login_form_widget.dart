@@ -1,25 +1,37 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:webrtc_flutter/router/router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webrtc_flutter/blocs/sing_in_bloc/sing_in_bloc.dart';
+import 'package:webrtc_flutter/common/utils/utils.dart';
 
 import '../../../../../ui/ui.dart';
 
-class LoginFormWidget extends StatelessWidget {
+class LoginFormWidget extends StatefulWidget {
   const LoginFormWidget({
     super.key,
     required this.emailController,
     required this.passwordController,
-    this.obscureText = true,
+    required this.formKey,
+    required this.utils,
   });
 
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final bool obscureText;
+
+  final GlobalKey<FormState> formKey;
+  final Utils utils;
+
+  @override
+  State<LoginFormWidget> createState() => _LoginFormWidgetState();
+}
+
+class _LoginFormWidgetState extends State<LoginFormWidget> {
+  bool obscureText = true;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Form(
+      key: widget.formKey,
       child: Center(
         child: BaseContainer(
           height: MediaQuery.of(context).size.height * 0.35,
@@ -29,21 +41,38 @@ class LoginFormWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomTextField(
-                controller: emailController,
+                validator: (value) => widget.utils.emailValidator(value),
+                controller: widget.emailController,
                 hintText: 'Email',
                 keyboardType: TextInputType.emailAddress,
               ),
               CustomTextField(
+                validator: (value) => widget.utils.passwordValidator(value),
                 hintText: 'Password',
-                controller: passwordController,
+                controller: widget.passwordController,
                 obscureText: obscureText,
                 keyboardType: TextInputType.name,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    obscureText = !obscureText;
+                    setState(() {});
+                  },
+                  icon: obscureText
+                      ? const Icon(Icons.visibility)
+                      : const Icon(Icons.visibility_off),
+                ),
               ),
               CustomButton(
                 onTap: () {
-                  AutoRouter.of(context).pushAndPopUntil(
-                      const HomeRouteMobile(),
-                      predicate: (route) => false);
+                  //  AutoRouter.of(context).pushAndPopUntil(
+                  // const HomeRouteMobile(),
+                  // predicate: (route) => false);
+
+                  if (widget.formKey.currentState!.validate()) {
+                    context.read<SingInBloc>().add(SingInRequired(
+                        password: widget.passwordController.text,
+                        email: widget.emailController.text));
+                  }
                 },
                 color: theme.primaryColor,
                 child: Text(

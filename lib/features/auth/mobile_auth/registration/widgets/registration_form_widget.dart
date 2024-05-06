@@ -6,7 +6,7 @@ import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_use
 
 import '../../../../../ui/ui.dart';
 
-class RegistrationFormWidget extends StatelessWidget {
+class RegistrationFormWidget extends StatefulWidget {
   const RegistrationFormWidget({
     super.key,
     required this.emailController,
@@ -25,10 +25,17 @@ class RegistrationFormWidget extends StatelessWidget {
   final Utils utils;
 
   @override
+  State<RegistrationFormWidget> createState() => _RegistrationFormWidgetState();
+}
+
+class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
+  bool obscureTextPassword = true;
+  bool obscureTextPasswordConfirm = true;
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Form(
-      key: formKey,
+      key: widget.formKey,
       child: Center(
         child: BaseContainer(
           height: MediaQuery.of(context).size.height * 0.55,
@@ -38,41 +45,59 @@ class RegistrationFormWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomTextField(
-                validator: (val) => utils.emailValidator(val),
+                validator: (val) => widget.utils.emailValidator(val),
                 hintText: 'Email',
-                controller: emailController,
+                controller: widget.emailController,
                 keyboardType: TextInputType.emailAddress,
               ),
               CustomTextField(
-                validator: (val) => utils.usernameValidator(val),
+                validator: (val) => widget.utils.usernameValidator(val),
                 hintText: 'Username',
-                controller: usernameController,
+                controller: widget.usernameController,
                 keyboardType: TextInputType.name,
               ),
               CustomTextField(
-                validator: (val) => utils.passwordValidator(val),
+                validator: (val) => widget.utils.passwordValidator(val),
                 hintText: 'Password',
-                controller: passwordController,
-                obscureText: true,
+                controller: widget.passwordController,
+                obscureText: obscureTextPassword,
                 keyboardType: TextInputType.text,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    obscureTextPassword = !obscureTextPassword;
+                    setState(() {});
+                  },
+                  icon: obscureTextPassword
+                      ? const Icon(Icons.visibility)
+                      : const Icon(Icons.visibility_off),
+                ),
               ),
               CustomTextField(
-                validator: (val) => utils.confirmPasswordValidator(
-                    val!, passwordController.text),
+                validator: (val) => widget.utils.confirmPasswordValidator(
+                    val!, widget.passwordController.text),
                 hintText: 'Confirm password',
-                controller: confirmPasswordController,
-                obscureText: true,
+                controller: widget.confirmPasswordController,
+                obscureText: obscureTextPasswordConfirm,
                 keyboardType: TextInputType.text,
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    obscureTextPasswordConfirm = !obscureTextPasswordConfirm;
+                    setState(() {});
+                  },
+                  icon: obscureTextPasswordConfirm
+                      ? const Icon(Icons.visibility)
+                      : const Icon(Icons.visibility_off),
+                ),
               ),
               CustomButton(
                 onTap: () {
-                  if (formKey.currentState!.validate()) {
+                  if (widget.formKey.currentState!.validate()) {
                     MyUserModel myUserModel = MyUserModel.empty.copyWith(
-                        email: emailController.text,
-                        username: usernameController.text);
+                        email: widget.emailController.text,
+                        username: widget.usernameController.text);
                     context.read<SignUpBloc>().add(SignUpRequired(
                         myUserModel: myUserModel,
-                        password: passwordController.text));
+                        password: widget.passwordController.text));
                   }
                 },
                 color: theme.primaryColor,

@@ -5,6 +5,7 @@ import 'package:webrtc_flutter/router/router.dart';
 
 import 'package:webrtc_flutter/ui/theme/image_const.dart';
 import '../../../../../blocs/sing_in_bloc/sing_in_bloc.dart';
+import '../../../../../common/utils/utils.dart';
 import '../widgets/login_form_widget.dart';
 
 @RoutePage()
@@ -18,7 +19,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController emailController;
   late TextEditingController passwordController;
-  bool obscureText = true;
+  final _formKey = GlobalKey<FormState>();
+  final utils = Utils();
+
   @override
   void initState() {
     emailController = TextEditingController();
@@ -67,7 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: LoginFormWidget(
                     emailController: emailController,
                     passwordController: passwordController,
-                    obscureText: obscureText,
+                    formKey: _formKey,
+                    utils: utils,
                   ),
                 ),
                 SliverToBoxAdapter(

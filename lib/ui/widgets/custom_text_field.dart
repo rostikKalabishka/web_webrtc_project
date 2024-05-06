@@ -30,10 +30,13 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       validator: validator,
       style: theme.inputDecorationTheme.hintStyle,
+
       // onChanged: onChanged,
       obscureText: obscureText,
       decoration: InputDecoration(
+          prefixIcon: prefixIcon,
           errorText: errorMsg,
+          suffixIcon: suffixIcon,
           hintText: hintText,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
