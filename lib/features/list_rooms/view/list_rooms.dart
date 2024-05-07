@@ -21,7 +21,6 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final theme = Theme.of(context);
     return Scaffold(
       body: RefreshIndicator.adaptive(
         onRefresh: () async {},

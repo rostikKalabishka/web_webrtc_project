@@ -22,7 +22,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   Future<void> _registration(SignUpRequired event, emit) async {
     emit(SingUpProcess());
     try {
-      await userRepository.registration(event.myUserModel, event.password);
+      final MyUserModel myUser =
+          await userRepository.registration(event.myUserModel, event.password);
+      await userRepository.setUserData(myUser);
       emit(SingUpSuccess());
     } catch (e) {
       emit(SingUpFailure(error: e));
