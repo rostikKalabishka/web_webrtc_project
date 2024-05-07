@@ -1,5 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webrtc_flutter/blocs/sing_in_bloc/sing_in_bloc.dart';
+import 'package:webrtc_flutter/router/router.dart';
 import 'package:webrtc_flutter/ui/ui.dart';
 
 @RoutePage()
@@ -61,10 +64,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             setState(() {
                               darkMode = !darkMode;
                             });
-                          })
+                          }),
                     ],
                   ),
                 ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  child: CustomButton(
+                    color: theme.primaryColor,
+                    onTap: () {
+                      context.read<SingInBloc>().add(SingOut());
+                      AutoRouter.of(context).pushAndPopUntil(
+                          const LoaderRoute(),
+                          predicate: (route) => false);
+                    },
+                    child: Text(
+                      'Logout',
+                      style: theme.textTheme.bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                )
               ],
             ),
           ),

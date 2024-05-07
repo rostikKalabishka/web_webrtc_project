@@ -23,32 +23,35 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
   Widget build(BuildContext context) {
     // final theme = Theme.of(context);
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-              title: const Text('List Rooms'),
-              pinned: true,
-              snap: true,
-              floating: true,
-              surfaceTintColor: Colors.transparent,
-              elevation: 0,
-              bottom: PreferredSize(
-                preferredSize: const Size.fromHeight(80),
-                child: SearchRoomWidget(
-                  searchController: searchController,
-                ),
-              )),
-          SliverList.separated(itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {},
-              child: const CustomRoomWidget(),
-            );
-          }, separatorBuilder: (context, _) {
-            return const SizedBox(
-              height: 10,
-            );
-          })
-        ],
+      body: RefreshIndicator.adaptive(
+        onRefresh: () async {},
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+                title: const Text('List Rooms'),
+                pinned: true,
+                snap: true,
+                floating: true,
+                surfaceTintColor: Colors.transparent,
+                elevation: 0,
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(80),
+                  child: SearchRoomWidget(
+                    searchController: searchController,
+                  ),
+                )),
+            SliverList.separated(itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () {},
+                child: const CustomRoomWidget(),
+              );
+            }, separatorBuilder: (context, _) {
+              return const SizedBox(
+                height: 10,
+              );
+            })
+          ],
+        ),
       ),
     );
   }

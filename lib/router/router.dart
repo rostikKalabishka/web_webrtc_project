@@ -17,12 +17,11 @@ class AppRouter extends _$AppRouter {
           page: LoaderRoute.page,
           path: '/',
         ),
-        AutoRoute(page: LoginRoute.page, path: '/login', children: [
-          AutoRoute(
-            page: RegistrationRoute.page,
-            path: 'registration',
-          ),
-        ]),
+        AutoRoute(page: LoginRoute.page, path: '/login', children: []),
+        AutoRoute(
+          page: RegistrationRoute.page,
+          path: '/registration',
+        ),
         AutoRoute(page: HomeRouteMobile.page, path: '/home', children: [
           AutoRoute(
             page: SettingsRoute.page,

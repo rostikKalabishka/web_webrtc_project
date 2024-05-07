@@ -1,7 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/blocs/sing_in_bloc/sing_in_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
+import 'package:webrtc_flutter/router/router.dart';
 
 import '../../../../../ui/ui.dart';
 
@@ -64,15 +66,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
               ),
               CustomButton(
                 onTap: () {
-                  //  AutoRouter.of(context).pushAndPopUntil(
-                  // const HomeRouteMobile(),
-                  // predicate: (route) => false);
-
-                  if (widget.formKey.currentState!.validate()) {
-                    context.read<SingInBloc>().add(SingInRequired(
-                        password: widget.passwordController.text,
-                        email: widget.emailController.text));
-                  }
+                  _signIn(context);
                 },
                 color: theme.primaryColor,
                 child: Text(
@@ -86,5 +80,15 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         ),
       ),
     );
+  }
+
+  void _signIn(BuildContext context) {
+    if (widget.formKey.currentState!.validate()) {
+      context.read<SingInBloc>().add(SingInRequired(
+          password: widget.passwordController.text,
+          email: widget.emailController.text));
+      AutoRouter.of(context)
+          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
+    }
   }
 }
