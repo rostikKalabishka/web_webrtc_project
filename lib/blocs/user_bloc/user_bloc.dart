@@ -14,7 +14,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UserEvent>((event, emit) async {
       if (event is GetCurrentUser) {
         await _getCurrentUser(event, emit);
-      } else if (event is GetCurrentUser) {
+      } else if (event is UpdateUserInfo) {
         await _updateUserInfo(event, emit);
       }
     });
@@ -30,5 +30,24 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
   }
 
-  Future<void> _updateUserInfo(GetCurrentUser event, emit) async {}
+  Future<void> _updateUserInfo(UpdateUserInfo event, emit) async {
+    emit(state.copyWith(updateUserInfoState: UpdateUserInfoState.loading));
+    try {
+      MyUserModel myUser = state.myUser.copyWith(username: event.username);
+
+      if (event.file.isNotEmpty) {
+        final String image =
+            await userRepository.uploadPicture(event.file, event.userId);
+        myUser = myUser.copyWith(userImage: image);
+      }
+
+      await userRepository.updateUserInfo(myUser);
+
+      emit(state.copyWith(
+          updateUserInfoState: UpdateUserInfoState.loaded, myUser: myUser));
+    } catch (e) {
+      emit(state.copyWith(
+          updateUserInfoState: UpdateUserInfoState.failure, error: e));
+    }
+  }
 }

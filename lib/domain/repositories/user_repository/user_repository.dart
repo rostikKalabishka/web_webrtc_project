@@ -86,7 +86,10 @@ class UserRepository implements UserRepositoryInterface {
   }
 
   @override
-  Future<String> uploadPicture(String file, String userId) async {
+  Future<String> uploadPicture(
+    String file,
+    String userId,
+  ) async {
     try {
       File imageFile = File(file);
       Reference referenceStorageRef =
@@ -96,6 +99,16 @@ class UserRepository implements UserRepositoryInterface {
       String url = await referenceStorageRef.getDownloadURL();
       await usersCollection.doc(userId).update({'userImage': url});
       return url;
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> updateUserInfo(MyUserModel userModel) async {
+    try {
+      await usersCollection.doc(userModel.id).update(userModel.toJson());
     } catch (e) {
       log(e.toString());
       rethrow;

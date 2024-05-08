@@ -20,4 +20,6 @@ abstract interface class UserRepositoryInterface {
   Future<MyUserModel> getMyUser(String myUserId);
 
   Future<String> uploadPicture(String file, String userId);
+
+  Future<void> updateUserInfo(MyUserModel userModel);
 }

@@ -16,6 +16,8 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>Photo Library usage</string>
 	<key>CFBundleName</key>
 	<string>webrtc_flutter</string>
 	<key>CFBundlePackageType</key>
