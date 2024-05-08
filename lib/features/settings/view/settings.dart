@@ -8,6 +8,7 @@ import 'package:webrtc_flutter/features/settings/widgets/show_update_user_info_b
 import 'package:webrtc_flutter/router/router.dart';
 import 'package:webrtc_flutter/ui/ui.dart';
 
+import '../../../blocs/theme_cubit/theme_cubit.dart';
 import '../../../ui/theme/image_const.dart';
 
 @RoutePage()
@@ -20,9 +21,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final _usernameController = TextEditingController();
-  bool darkMode = true;
+
   @override
   Widget build(BuildContext context) {
+    final isDarkTheme = context.watch<ThemeCubit>().state.isDark;
     final theme = Theme.of(context);
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
@@ -76,12 +78,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             style: theme.textTheme.bodyLarge,
                           ),
                           Switch.adaptive(
-                              value: darkMode,
-                              onChanged: (value) {
-                                setState(() {
-                                  darkMode = !darkMode;
-                                });
-                              }),
+                              value: isDarkTheme,
+                              onChanged: (value) =>
+                                  _setThemeBrightness(context, value)),
                         ],
                       ),
                     ),
@@ -111,6 +110,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       },
     );
+  }
+
+  void _setThemeBrightness(BuildContext context, bool value) {
+    context.read<ThemeCubit>().setThemeBrightness(
+          value ? Brightness.dark : Brightness.light,
+        );
   }
 
   Future _showUpdateUserInfoBottomSheet(BuildContext context) async {
