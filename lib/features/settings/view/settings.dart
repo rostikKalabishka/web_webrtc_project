@@ -1,9 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/blocs/sing_in_bloc/sing_in_bloc.dart';
+import 'package:webrtc_flutter/blocs/user_bloc/user_bloc.dart';
+import 'package:webrtc_flutter/features/settings/widgets/show_update_user_info_bottom_sheet.dart';
 import 'package:webrtc_flutter/router/router.dart';
 import 'package:webrtc_flutter/ui/ui.dart';
+
+import '../../../ui/theme/image_const.dart';
 
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
@@ -14,83 +19,107 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final _usernameController = TextEditingController();
   bool darkMode = true;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const SliverAppBar(
-            title: Text('Settings'),
-          ),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                BaseContainer(
-                    margin: const EdgeInsets.all(12),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    child: ListTile(
-                        leading: const CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://upload.wikimedia.org/wikipedia/commons/2/23/Lil-Peep_PrettyPuke_Photoshoot.png'),
-                          radius: 30,
-                        ),
-                        title: const Text('Rostik Kalabishka',
-                            overflow: TextOverflow.ellipsis),
-                        subtitle: const Text(
-                          'rostik31052002@gmail.com',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        trailing: Icon(
-                          Icons.arrow_forward_ios,
-                          color: theme.hintColor,
-                        ))),
-                BaseContainer(
-                  margin: const EdgeInsets.all(12),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Dark Mode',
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                      Switch.adaptive(
-                          value: darkMode,
-                          onChanged: (value) {
-                            setState(() {
-                              darkMode = !darkMode;
-                            });
-                          }),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                  child: CustomButton(
-                    color: theme.primaryColor,
-                    onTap: () {
-                      context.read<SingInBloc>().add(SingOut());
-                      AutoRouter.of(context).pushAndPopUntil(
-                          const LoaderRoute(),
-                          predicate: (route) => false);
-                    },
-                    child: Text(
-                      'Logout',
-                      style: theme.textTheme.bodyLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
+    return BlocBuilder<UserBloc, UserState>(
+      builder: (context, state) {
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              const SliverAppBar(
+                title: Text('Settings'),
+              ),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        await _showUpdateUserInfoBottomSheet(context);
+                      },
+                      child: BaseContainer(
+                          margin: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                          child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    state.myUser.userImage.isNotEmpty
+                                        ? NetworkImage(state.myUser.userImage)
+                                        : const AssetImage(
+                                                ImageConst.userPlaceholder)
+                                            as ImageProvider,
+                                radius: 30,
+                              ),
+                              title: Text(state.myUser.username,
+                                  overflow: TextOverflow.ellipsis),
+                              subtitle: Text(
+                                state.myUser.email,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios,
+                                color: theme.hintColor,
+                              ))),
                     ),
-                  ),
-                )
-              ],
-            ),
+                    BaseContainer(
+                      margin: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Dark Mode',
+                            style: theme.textTheme.bodyLarge,
+                          ),
+                          Switch.adaptive(
+                              value: darkMode,
+                              onChanged: (value) {
+                                setState(() {
+                                  darkMode = !darkMode;
+                                });
+                              }),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
+                      child: CustomButton(
+                        color: theme.primaryColor,
+                        onTap: () {
+                          context.read<SingInBloc>().add(SingOut());
+                          AutoRouter.of(context).pushAndPopUntil(
+                              const LoaderRoute(),
+                              predicate: (route) => false);
+                        },
+                        child: Text(
+                          'Logout',
+                          style: theme.textTheme.bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
+  }
+
+  Future _showUpdateUserInfoBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return ShowUpdateUserInfoBottomSheet(
+            usernameController: _usernameController,
+          );
+        });
   }
 }
