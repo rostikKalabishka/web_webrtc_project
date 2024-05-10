@@ -69,6 +69,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
                   _signIn(context);
                 },
                 color: theme.primaryColor,
+                borderRadius: BorderRadius.circular(16),
                 child: Text(
                   'Login',
                   style: theme.textTheme.bodyLarge

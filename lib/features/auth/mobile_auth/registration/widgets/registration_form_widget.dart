@@ -105,6 +105,7 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                   }
                 },
                 color: theme.primaryColor,
+                borderRadius: BorderRadius.circular(16),
                 child: Text(
                   'Registration',
                   style: theme.textTheme.bodyLarge

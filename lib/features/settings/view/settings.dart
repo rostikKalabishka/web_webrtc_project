@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/blocs/sing_in_bloc/sing_in_bloc.dart';
 import 'package:webrtc_flutter/blocs/user_bloc/user_bloc.dart';
@@ -95,9 +95,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               const LoaderRoute(),
                               predicate: (route) => false);
                         },
+                        borderRadius: BorderRadius.circular(30),
                         child: Text(
                           'Logout',
-                          style: theme.textTheme.bodyLarge
+                          style: theme.textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ),

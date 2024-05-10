@@ -6,20 +6,21 @@ class CustomButton extends StatelessWidget {
     required this.child,
     this.color = Colors.white,
     required this.onTap,
+    required this.borderRadius,
   });
   final Widget child;
   final Color color;
   final VoidCallback onTap;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: borderRadius,
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16), color: color),
+        decoration: BoxDecoration(borderRadius: borderRadius, color: color),
         child: Center(child: child),
       ),
     );

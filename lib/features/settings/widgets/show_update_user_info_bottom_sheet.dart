@@ -73,9 +73,10 @@ class _ShowUpdateUserInfoBottomSheetState
                 _updateUserInfo(bloc, context);
               },
               color: theme.primaryColor,
+              borderRadius: BorderRadius.circular(16),
               child: Text(
                 'Save changes',
-                style: theme.textTheme.bodyLarge
+                style: theme.textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
