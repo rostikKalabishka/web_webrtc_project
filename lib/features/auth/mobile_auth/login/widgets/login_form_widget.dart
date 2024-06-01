@@ -14,6 +14,7 @@ class LoginFormWidget extends StatefulWidget {
     required this.passwordController,
     required this.formKey,
     required this.utils,
+    required this.onTap,
   });
 
   final TextEditingController emailController;
@@ -21,6 +22,7 @@ class LoginFormWidget extends StatefulWidget {
 
   final GlobalKey<FormState> formKey;
   final Utils utils;
+  final VoidCallback onTap;
 
   @override
   State<LoginFormWidget> createState() => _LoginFormWidgetState();
@@ -65,9 +67,7 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
                 ),
               ),
               CustomButton(
-                onTap: () {
-                  _signIn(context);
-                },
+                onTap: widget.onTap,
                 color: theme.primaryColor,
                 borderRadius: BorderRadius.circular(16),
                 child: Text(
@@ -81,15 +81,5 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
         ),
       ),
     );
-  }
-
-  void _signIn(BuildContext context) {
-    if (widget.formKey.currentState!.validate()) {
-      context.read<SingInBloc>().add(SingInRequired(
-          password: widget.passwordController.text,
-          email: widget.emailController.text));
-      AutoRouter.of(context)
-          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
-    }
   }
 }

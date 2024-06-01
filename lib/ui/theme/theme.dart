@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:webrtc_flutter/ui/theme/const_color.dart';
 
 final darkTheme = ThemeData(
@@ -21,10 +22,11 @@ final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   inputDecorationTheme: const InputDecorationTheme(
     border: OutlineInputBorder(
-      borderSide: BorderSide(color: ConstColor.textFieldBorderSideColor),
+      borderSide: BorderSide(color: Colors.black),
     ),
   ),
   textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Colors.white),
     headlineSmall: TextStyle(color: Colors.white, fontSize: 18),
   ),
 );

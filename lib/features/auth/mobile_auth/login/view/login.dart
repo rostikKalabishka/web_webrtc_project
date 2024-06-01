@@ -2,7 +2,6 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/router/router.dart';
-
 import 'package:webrtc_flutter/ui/theme/image_const.dart';
 import '../../../../../blocs/sing_in_bloc/sing_in_bloc.dart';
 import '../../../../../common/utils/utils.dart';
@@ -21,12 +20,13 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController passwordController;
   final _formKey = GlobalKey<FormState>();
   final utils = Utils();
+  String error = '';
 
   @override
   void initState() {
+    super.initState();
     emailController = TextEditingController();
     passwordController = TextEditingController();
-    super.initState();
   }
 
   @override
@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     return BlocConsumer<SingInBloc, SingInState>(
       listener: (context, state) {
-        // TODO: implement listener
+        errorHandler(state, context, theme);
       },
       builder: (context, state) {
         return GestureDetector(
@@ -72,6 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     passwordController: passwordController,
                     formKey: _formKey,
                     utils: utils,
+                    onTap: () {
+                      formController(context);
+                    },
                   ),
                 ),
                 SliverToBoxAdapter(
@@ -95,12 +98,35 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
         );
       },
     );
+  }
+
+  void errorHandler(SingInState state, BuildContext context, ThemeData theme) {
+    if (state is SingInFailure) {
+      setState(() {
+        error = state.error.toString();
+      });
+      utils.errorSnackBar(context, theme, error);
+    } else if (state is SingInSuccess) {
+      AutoRouter.of(context)
+          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
+    } else {
+      setState(() {
+        error = '';
+      });
+    }
+  }
+
+  void formController(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<SingInBloc>().add(SingInRequired(
+          password: passwordController.text, email: emailController.text));
+    }
   }
 }
