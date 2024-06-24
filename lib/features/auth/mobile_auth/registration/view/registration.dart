@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/blocs/sing_up_bloc/sign_up_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
+import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
+import 'package:webrtc_flutter/router/router.dart';
 
 import 'package:webrtc_flutter/ui/theme/image_const.dart';
 
@@ -24,6 +26,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final utils = Utils();
+  String error = '';
   @override
   void initState() {
     emailController = TextEditingController();
@@ -47,7 +50,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final theme = Theme.of(context);
     return BlocConsumer<SignUpBloc, SignUpState>(
       listener: (context, state) {
-        // TODO: implement listener
+        errorHandler(state, context, theme);
       },
       builder: (context, state) {
         return GestureDetector(
@@ -88,5 +91,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         );
       },
     );
+  }
+
+  void errorHandler(SignUpState state, BuildContext context, ThemeData theme) {
+    if (state is SingUpFailure) {
+      setState(() {
+        error = state.error.toString();
+      });
+      utils.errorSnackBar(context, theme, error);
+    } else if (state is SingUpProcess) {
+      AutoRouter.of(context)
+          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
+    } else {
+      setState(() {
+        error = '';
+      });
+    }
+  }
+
+  void formController(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      MyUserModel userModel = MyUserModel(
+          id: '',
+          email: emailController.text,
+          username: usernameController.text,
+          userImage: '');
+
+      context.read<SignUpBloc>().add(SignUpRequired(
+          password: passwordController.text, myUserModel: userModel));
+    }
   }
 }
