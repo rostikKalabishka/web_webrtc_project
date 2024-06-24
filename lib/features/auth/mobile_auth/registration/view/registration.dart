@@ -99,7 +99,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         error = state.error.toString();
       });
       utils.errorSnackBar(context, theme, error);
-    } else if (state is SingUpProcess) {
+    } else if (state is SingUpSuccess) {
       AutoRouter.of(context)
           .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
     } else {

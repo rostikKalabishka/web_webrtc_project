@@ -1,1 +1,3 @@
-abstract interface class RoomRepositoryInterface {}
+abstract interface class RoomRepositoryInterface {
+  Future<void> createRoom();
+}

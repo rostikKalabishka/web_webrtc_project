@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
   final prefs = await SharedPreferences.getInstance();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   Bloc.observer = SimpleBlocObserver();
@@ -20,3 +22,22 @@ Future<void> main() async {
     preferences: prefs,
   ));
 }
+
+// void createLanguageCollection() async {
+//   final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+//   await firestore.collection('languages').doc('ukrainian').set({
+//     'name': 'Українська',
+//     'code': 'uk',
+//   });
+
+//   await firestore.collection('languages').doc('english').set({
+//     'name': 'English',
+//     'code': 'en',
+//   });
+
+//   await firestore.collection('languages').doc('germany').set({
+//     'name': 'Germany',
+//     'code': 'de',
+//   });
+//}

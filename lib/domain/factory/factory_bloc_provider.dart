@@ -25,7 +25,6 @@ class FactoryBlocProvider extends StatefulWidget {
 class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
   @override
   void initState() {
-    ;
     super.initState();
   }
 
