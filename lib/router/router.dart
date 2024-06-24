@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:webrtc_flutter/features/home/view/home_screen_mobile.dart';
+import 'package:webrtc_flutter/features/auth/mobile_auth/login/view/login.dart';
+import 'package:webrtc_flutter/features/auth/mobile_auth/registration/view/registration.dart';
+import 'package:webrtc_flutter/features/loader/view/loader.dart';
+import 'package:webrtc_flutter/features/settings/view/settings.dart';
 
-import '../features/auth/mobile_auth/login/view/view.dart';
-import '../features/auth/mobile_auth/registration/registration.dart';
-import '../features/list_rooms/view/view.dart';
-import '../features/loader/loader.dart';
-import '../features/settings/settings.dart';
+import '../features/create_room/view/create_room.dart';
+import '../features/home/view/home_screen_mobile.dart';
+import '../features/list_rooms/view/list_rooms.dart';
 
 part 'router.gr.dart';
 
@@ -31,6 +32,7 @@ class AppRouter extends _$AppRouter {
             page: ListRoomsRoute.page,
             path: 'list_rooms',
           )
-        ])
+        ]),
+        AutoRoute(page: CreateRoomRoute.page, path: '/list_rooms/create_room'),
       ];
 }

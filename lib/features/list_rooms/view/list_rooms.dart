@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:webrtc_flutter/router/router.dart';
 
 import '../widgets/widgets.dart';
 
@@ -27,6 +28,13 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        _navigateTo(const CreateRoomRoute());
+                      },
+                      icon: const Icon(Icons.add))
+                ],
                 title: const Text('List Rooms'),
                 pinned: true,
                 snap: true,
@@ -53,5 +61,9 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
         ),
       ),
     );
+  }
+
+  void _navigateTo(PageRouteInfo<dynamic> route) {
+    AutoRouter.of(context).push(route);
   }
 }
