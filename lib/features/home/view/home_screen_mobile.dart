@@ -25,7 +25,7 @@ class _HomeScreenMobileState extends State<HomeScreenMobile> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AutoTabsRouter(
-      routes: [ListRoomsRoute(), SettingsRoute()],
+      routes: const [ListRoomsRoute(), SettingsRoute()],
       builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(

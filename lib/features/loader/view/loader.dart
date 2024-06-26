@@ -14,23 +14,28 @@ class LoaderScreen extends StatefulWidget {
 
 class _LoaderScreenState extends State<LoaderScreen> {
   @override
+  void initState() {
+    super.initState();
+
+    // Викликаємо navigateTo після завершення побудови віджета
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      navigateTo(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthenticationBloc, AuthenticationState>(
-      listenWhen: (previous, current) =>
-          current != const AuthenticationState.unknown(),
-      listener: (context, state) {
-        print('Authentication state changed: $state');
-        navigateTo(context, state);
-      },
-      child: const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator.adaptive(),
       ),
     );
   }
 
-  void navigateTo(BuildContext context, AuthenticationState state) {
+  void navigateTo(BuildContext context) {
+    final authBloc = context.read<AuthenticationBloc>();
+    final state = authBloc.state;
+
     if (state.status == AuthenticationStatus.authenticated) {
       AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
           predicate: (route) => false);

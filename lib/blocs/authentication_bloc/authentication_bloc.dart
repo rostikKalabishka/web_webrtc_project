@@ -14,10 +14,12 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
   late final StreamSubscription<User?> _userSubscription;
+
   AuthenticationBloc({required UserRepository myUserRepository})
       : userRepository = myUserRepository,
         super(const AuthenticationState.unknown()) {
     _userSubscription = userRepository.user.listen((user) {
+      log('User subscription received: $user');
       add(AuthenticationUserChanged(user));
     });
 
@@ -25,13 +27,20 @@ class AuthenticationBloc
       final user = event.user;
       try {
         if (user != null) {
+          print('User authenticated: $user');
           emit(AuthenticationState.authenticated(user));
         } else {
           emit(const AuthenticationState.unauthenticated());
         }
       } catch (e) {
-        log(e.toString());
+        log('Error: $e');
       }
     });
+  }
+
+  @override
+  Future<void> close() {
+    _userSubscription.cancel();
+    return super.close();
   }
 }
