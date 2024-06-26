@@ -69,8 +69,8 @@ class _LoginFormWidgetState extends State<LoginFormWidget> {
                 borderRadius: BorderRadius.circular(16),
                 child: Text(
                   'Login',
-                  style: theme.textTheme.bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               )
             ],

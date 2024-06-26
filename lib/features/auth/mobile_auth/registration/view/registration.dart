@@ -83,6 +83,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     usernameController: usernameController,
                     formKey: _formKey,
                     utils: utils,
+                    onTap: () {
+                      formController(context, state);
+                    },
                   ),
                 ),
               ],
@@ -99,9 +102,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         error = state.error.toString();
       });
       utils.errorSnackBar(context, theme, error);
-    } else if (state is SingUpSuccess) {
-      AutoRouter.of(context)
-          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
     } else {
       setState(() {
         error = '';
@@ -109,7 +109,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  void formController(BuildContext context) {
+  void formController(BuildContext context, SignUpState state) {
     if (_formKey.currentState!.validate()) {
       MyUserModel userModel = MyUserModel(
           id: '',
@@ -119,6 +119,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
       context.read<SignUpBloc>().add(SignUpRequired(
           password: passwordController.text, myUserModel: userModel));
+
+      if (state is SingUpSuccess) {
+        AutoRouter.of(context)
+            .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
+      }
     }
   }
 }

@@ -12,6 +12,7 @@ final darkTheme = ThemeData(
     ),
   ),
   textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: Colors.white),
     headlineSmall: TextStyle(color: Colors.white, fontSize: 18),
   ),
 );
@@ -26,7 +27,7 @@ final ThemeData lightTheme = ThemeData(
     ),
   ),
   textTheme: const TextTheme(
-    bodyLarge: TextStyle(color: Colors.white),
+    bodyLarge: TextStyle(color: Colors.black),
     headlineSmall: TextStyle(color: Colors.white, fontSize: 18),
   ),
 );

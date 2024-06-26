@@ -42,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocConsumer<SingInBloc, SingInState>(
       listener: (context, state) {
         errorHandler(state, context, theme);
+        navigateTo(context, state);
       },
       builder: (context, state) {
         return GestureDetector(
@@ -113,9 +114,6 @@ class _LoginScreenState extends State<LoginScreen> {
         error = state.error.toString();
       });
       utils.errorSnackBar(context, theme, error);
-    } else if (state is SingInSuccess) {
-      AutoRouter.of(context)
-          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
     } else {
       setState(() {
         error = '';
@@ -127,6 +125,13 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       context.read<SingInBloc>().add(SingInRequired(
           password: passwordController.text, email: emailController.text));
+    }
+  }
+
+  void navigateTo(BuildContext context, SingInState state) {
+    if (state is SingInSuccess) {
+      AutoRouter.of(context)
+          .pushAndPopUntil(const LoaderRoute(), predicate: (route) => false);
     }
   }
 }

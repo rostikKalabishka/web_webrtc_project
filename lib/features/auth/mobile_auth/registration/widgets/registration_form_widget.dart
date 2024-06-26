@@ -1,10 +1,5 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:webrtc_flutter/blocs/sing_up_bloc/sign_up_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
-import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
-import 'package:webrtc_flutter/router/router.dart';
 
 import '../../../../../ui/ui.dart';
 
@@ -17,6 +12,7 @@ class RegistrationFormWidget extends StatefulWidget {
     required this.usernameController,
     required this.formKey,
     required this.utils,
+    required this.onTap,
   });
 
   final TextEditingController emailController;
@@ -25,6 +21,7 @@ class RegistrationFormWidget extends StatefulWidget {
   final TextEditingController usernameController;
   final GlobalKey<FormState> formKey;
   final Utils utils;
+  final VoidCallback onTap;
 
   @override
   State<RegistrationFormWidget> createState() => _RegistrationFormWidgetState();
@@ -92,24 +89,13 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                 ),
               ),
               CustomButton(
-                onTap: () {
-                  if (widget.formKey.currentState!.validate()) {
-                    MyUserModel myUserModel = MyUserModel.empty.copyWith(
-                        email: widget.emailController.text,
-                        username: widget.usernameController.text);
-                    context.read<SignUpBloc>().add(SignUpRequired(
-                        myUserModel: myUserModel,
-                        password: widget.passwordController.text));
-                    AutoRouter.of(context).pushAndPopUntil(const LoaderRoute(),
-                        predicate: (route) => false);
-                  }
-                },
+                onTap: widget.onTap,
                 color: theme.primaryColor,
                 borderRadius: BorderRadius.circular(16),
                 child: Text(
                   'Registration',
-                  style: theme.textTheme.bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               )
             ],

@@ -19,6 +19,7 @@ class _LoaderScreenState extends State<LoaderScreen> {
       listenWhen: (previous, current) =>
           current != const AuthenticationState.unknown(),
       listener: (context, state) {
+        print('Authentication state changed: $state');
         navigateTo(context, state);
       },
       child: const Scaffold(
