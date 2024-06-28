@@ -16,6 +16,8 @@ class GetCurrentUser extends UserEvent {
   List<Object> get props => super.props..add(uid);
 }
 
+class SingOut extends UserEvent {}
+
 class UpdateUserInfo extends UserEvent {
   final String file;
   final String userId;

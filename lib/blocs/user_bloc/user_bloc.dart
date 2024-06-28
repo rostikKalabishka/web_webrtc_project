@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
@@ -16,6 +18,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         await _getCurrentUser(event, emit);
       } else if (event is UpdateUserInfo) {
         await _updateUserInfo(event, emit);
+      } else if (event is SingOut) {
+        await _singOut(event, emit);
       }
     });
   }
@@ -48,6 +52,18 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     } catch (e) {
       emit(state.copyWith(
           updateUserInfoState: UpdateUserInfoState.failure, error: e));
+    }
+  }
+
+  Future<void> _singOut(event, emit) async {
+    emit(state.copyWith(singOutStatus: SingOutStatus.singOutProcess));
+    try {
+      await userRepository.logOut();
+      emit(state.copyWith(singOutStatus: SingOutStatus.singOutSuccess));
+    } catch (e) {
+      log(e.toString());
+      emit(state.copyWith(
+          error: e, singOutStatus: SingOutStatus.singOutFailure));
     }
   }
 }

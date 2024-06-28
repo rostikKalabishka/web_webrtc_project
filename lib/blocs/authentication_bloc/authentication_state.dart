@@ -6,6 +6,9 @@ class AuthenticationState extends Equatable {
   final AuthenticationStatus status;
   final User? user;
 
+  bool get userNotNull => user != null;
+  bool get userIsNull => user == null;
+
   const AuthenticationState._({
     this.status = AuthenticationStatus.unknown,
     this.user,

@@ -5,42 +5,34 @@ import 'package:webrtc_flutter/blocs/authentication_bloc/authentication_bloc.dar
 import 'package:webrtc_flutter/router/router.dart';
 
 @RoutePage()
-class LoaderScreen extends StatefulWidget {
+class LoaderScreen extends StatelessWidget {
   const LoaderScreen({super.key});
-
   @override
-  State<LoaderScreen> createState() => _LoaderScreenState();
-}
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        // listener: (context, state) {
+        //   navigateTo(context, state);
+        // },
 
-class _LoaderScreenState extends State<LoaderScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      navigateTo(context);
+        builder: (context, state) {
+      navigateTo(context, state);
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator.adaptive(),
+        ),
+      );
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator.adaptive(),
-      ),
-    );
-  }
+  void navigateTo(BuildContext context, AuthenticationState state) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final navigateToNextScreen =
+          state.status == AuthenticationStatus.authenticated
+              ? const HomeRouteMobile()
+              : const LoginRoute();
 
-  void navigateTo(BuildContext context) {
-    final authBloc = context.read<AuthenticationBloc>();
-    final state = authBloc.state;
-
-    if (state.status == AuthenticationStatus.authenticated) {
-      AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
-          predicate: (route) => false);
-    } else {
       AutoRouter.of(context)
-          .pushAndPopUntil(const LoginRoute(), predicate: (route) => false);
-    }
+          .pushAndPopUntil(navigateToNextScreen, predicate: (route) => false);
+    });
   }
 }

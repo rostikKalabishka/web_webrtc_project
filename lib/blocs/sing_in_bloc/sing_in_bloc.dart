@@ -15,9 +15,10 @@ class SingInBloc extends Bloc<SingInEvent, SingInState> {
     on<SingInEvent>((event, emit) async {
       if (event is SingInRequired) {
         await _singIn(event, emit);
-      } else if (event is SingOut) {
-        await _singOut(event, emit);
       }
+      // else if (event is SingOut) {
+      //   await _singOut(event, emit);
+      // }
     });
   }
 
@@ -25,17 +26,6 @@ class SingInBloc extends Bloc<SingInEvent, SingInState> {
     emit(SingInProcess());
     try {
       await userRepository.singIn(event.email, event.password);
-      emit(SingInSuccess());
-    } catch (e) {
-      log(e.toString());
-      emit(SingInFailure(error: e));
-    }
-  }
-
-  Future<void> _singOut(SingOut event, emit) async {
-    emit(SingInProcess());
-    try {
-      await userRepository.logOut();
       emit(SingInSuccess());
     } catch (e) {
       log(e.toString());

@@ -13,6 +13,10 @@ class SingInProcess extends SingInState {}
 
 class SingInSuccess extends SingInState {}
 
+class SingOutProcess extends SingInState {}
+
+class SingOutSuccess extends SingInState {}
+
 class SingInFailure extends SingInState {
   final Object error;
 
