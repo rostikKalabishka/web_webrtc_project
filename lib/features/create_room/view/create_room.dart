@@ -34,6 +34,8 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width * 0.82;
+    final TextEditingController menuController = TextEditingController();
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -47,6 +49,9 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               formKey: _formKey,
               utils: utils,
               onTap: () {},
+              width: width,
+              menuController: menuController,
+              menuItems: menuItems,
             ),
           ),
         ],
@@ -54,3 +59,36 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     );
   }
 }
+
+class MenuItem {
+  final int id;
+  final String label;
+
+  MenuItem(
+    this.id,
+    this.label,
+  );
+}
+
+List<MenuItem> menuItems = [
+  MenuItem(
+    1,
+    'Home',
+  ),
+  MenuItem(
+    2,
+    'Profile',
+  ),
+  MenuItem(
+    3,
+    'Settings',
+  ),
+  MenuItem(
+    4,
+    'Favorites',
+  ),
+  MenuItem(
+    5,
+    'Notifications',
+  )
+];

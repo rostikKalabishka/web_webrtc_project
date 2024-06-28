@@ -17,15 +17,14 @@ class _LoaderScreenState extends State<LoaderScreen> {
   void initState() {
     super.initState();
 
-    // Викликаємо navigateTo після завершення побудови віджета
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       navigateTo(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: CircularProgressIndicator.adaptive(),
       ),
