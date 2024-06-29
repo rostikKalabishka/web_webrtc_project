@@ -16,8 +16,6 @@ class BaseDropdownMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // double width = MediaQuery.of(context).size.width * 0.82;
-    // final TextEditingController menuController = TextEditingController();
     MenuItem? selectedMenu;
     final theme = Theme.of(context);
     return DropdownMenu<MenuItem>(

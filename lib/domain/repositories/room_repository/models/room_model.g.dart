@@ -9,7 +9,8 @@ part of 'room_model.dart';
 RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
       id: json['id'] as String,
       roomName: json['roomName'] as String,
-      roomLanguage: json['roomLanguage'] as String,
+      roomLanguage:
+          LanguagesModel.fromJson(json['roomLanguage'] as Map<String, dynamic>),
       roomUsersList: (json['roomUsersList'] as List<dynamic>)
           .map((e) => MyUserModel.fromJson(e as Map<String, dynamic>))
           .toList(),

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 
 import '../../user_repository/models/my_user_model.dart';
 
@@ -11,7 +12,7 @@ final DateTime now = DateTime.now();
 class RoomModel extends Equatable {
   final String id;
   final String roomName;
-  final String roomLanguage;
+  final LanguagesModel roomLanguage;
   final List<MyUserModel> roomUsersList;
   final int maxUserInRoom;
   final DateTime createTimeRoom;
@@ -38,7 +39,7 @@ class RoomModel extends Equatable {
   RoomModel copyWith({
     String? id,
     String? roomName,
-    String? roomLanguage,
+    LanguagesModel? roomLanguage,
     List<MyUserModel>? roomUsersList,
     int? maxUserInRoom,
     DateTime? createTimeRoom,
