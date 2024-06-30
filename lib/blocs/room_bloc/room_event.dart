@@ -10,3 +10,5 @@ sealed class RoomEvent extends Equatable {
 class RoomCreate extends RoomEvent {}
 
 class RoomConnect extends RoomEvent {}
+
+class GetLanguagesList extends RoomEvent {}

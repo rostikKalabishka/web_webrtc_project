@@ -9,6 +9,7 @@ import 'package:webrtc_flutter/blocs/theme_cubit/theme_cubit.dart';
 import 'package:webrtc_flutter/blocs/user_bloc/user_bloc.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
 
+import '../../blocs/room_bloc/room_bloc.dart';
 import '../repositories/settings_repository/settings.dart';
 import '../repositories/user_repository/user_repository.dart';
 
@@ -38,11 +39,13 @@ class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
     final signUpBloc = SignUpBloc(myUserRepository: userRepository);
     final userBloc = UserBloc(myUserRepository: userRepository);
     final themeCubit = ThemeCubit(settingsRepository: settingsRepository);
+    final RoomBloc roomBloc = RoomBloc(roomRepository: roomRepository);
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => singInBloc),
         BlocProvider(create: (_) => signUpBloc),
         BlocProvider(create: (_) => themeCubit),
+        BlocProvider(create: (_) => roomBloc..add(GetLanguagesList())),
         BlocProvider(
             create: (_) => userBloc
               ..add(GetCurrentUser(
