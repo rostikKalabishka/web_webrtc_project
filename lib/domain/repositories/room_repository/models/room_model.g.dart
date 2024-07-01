@@ -21,7 +21,7 @@ RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
 Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
       'id': instance.id,
       'roomName': instance.roomName,
-      'roomLanguage': instance.roomLanguage,
+      'roomLanguage': instance.roomLanguage.toJson(),
       'roomUsersList': instance.roomUsersList,
       'maxUserInRoom': instance.maxUserInRoom,
       'createTimeRoom': instance.createTimeRoom.toIso8601String(),

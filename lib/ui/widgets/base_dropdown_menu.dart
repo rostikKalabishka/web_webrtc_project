@@ -4,22 +4,21 @@ import 'package:webrtc_flutter/features/create_room/view/create_room.dart';
 class BaseDropdownMenu extends StatelessWidget {
   const BaseDropdownMenu({
     super.key,
-    //required this.selectedMenu,
     required this.width,
     required this.menuController,
     required this.menuItems,
+    required this.onSelected,
   });
 
   final double width;
   final TextEditingController menuController;
   final List<MenuItem> menuItems;
+  final ValueChanged<MenuItem?> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    MenuItem? selectedMenu;
     final theme = Theme.of(context);
     return DropdownMenu<MenuItem>(
-      // initialSelection: menuItems.first,
       controller: menuController,
       width: width,
       hintText: "Select Language",
@@ -27,7 +26,7 @@ class BaseDropdownMenu extends StatelessWidget {
       enableFilter: true,
       label: const Text('Select Language'),
       onSelected: (MenuItem? menu) {
-        selectedMenu = menu;
+        onSelected(menu);
       },
       dropdownMenuEntries:
           menuItems.map<DropdownMenuEntry<MenuItem>>((MenuItem menu) {

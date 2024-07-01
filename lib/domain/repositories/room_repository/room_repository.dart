@@ -15,10 +15,13 @@ class RoomRepository implements RoomRepositoryInterface {
   @override
   Future<void> createRoom(RoomModel roomModel) async {
     roomModel = roomModel.copyWith(
-        createTimeRoom: DateTime.now(), id: const Uuid().v1());
+      createTimeRoom: DateTime.now(),
+      id: const Uuid().v1(),
+    );
 
     try {
-      await roomsCollection.doc(roomModel.id).set(roomModel.toJson());
+      final roomModelJson = roomModel.toJson();
+      await roomsCollection.doc(roomModel.id).set(roomModelJson);
     } catch (e) {
       log(e.toString());
       rethrow;

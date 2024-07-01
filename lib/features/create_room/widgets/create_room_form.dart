@@ -1,11 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webrtc_flutter/blocs/room_bloc/room_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
+import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
+import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
 import 'package:webrtc_flutter/features/create_room/view/create_room.dart';
+import 'package:webrtc_flutter/router/router.dart';
 import 'package:webrtc_flutter/ui/widgets/base_dropdown_menu.dart';
 
 import '../../../ui/ui.dart';
 
-class CreateRoomWidget extends StatelessWidget {
+class CreateRoomWidget extends StatefulWidget {
   const CreateRoomWidget({
     super.key,
     required this.roomNameController,
@@ -13,12 +19,11 @@ class CreateRoomWidget extends StatelessWidget {
     required this.formKey,
     required this.utils,
     required this.onTap,
-    required,
     required this.width,
     required this.menuController,
     required this.menuItems,
-    // required this.selectedMenu
   });
+
   final TextEditingController roomNameController;
   final TextEditingController maxUserCountController;
 
@@ -28,14 +33,20 @@ class CreateRoomWidget extends StatelessWidget {
 
   final double width;
   final TextEditingController menuController;
-  // final MenuItem selectedMenu;
   final List<MenuItem> menuItems;
+
+  @override
+  _CreateRoomWidgetState createState() => _CreateRoomWidgetState();
+}
+
+class _CreateRoomWidgetState extends State<CreateRoomWidget> {
+  MenuItem? selectedMenu;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Form(
-      key: formKey,
+      key: widget.formKey,
       child: Center(
         child: BaseContainer(
           height: MediaQuery.of(context).size.height * 0.45,
@@ -45,27 +56,32 @@ class CreateRoomWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CustomTextField(
-                validator: (value) => utils.usernameValidator(value),
-                controller: roomNameController,
+                validator: (value) => widget.utils.usernameValidator(value),
+                controller: widget.roomNameController,
                 hintText: 'Room name',
                 keyboardType: TextInputType.emailAddress,
               ),
               CustomTextField(
-                validator: (value) => utils.passwordValidator(value),
+                validator: (value) => widget.utils.passwordValidator(value),
                 hintText: 'Enter user count',
-                controller: maxUserCountController,
+                controller: widget.maxUserCountController,
                 keyboardType: TextInputType.name,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: BaseDropdownMenu(
-                  //selectedMenu: selectedMenu,
-                  width: width,
-                  menuController: menuController, menuItems: menuItems,
+                  width: widget.width,
+                  menuController: widget.menuController,
+                  menuItems: widget.menuItems,
+                  onSelected: (MenuItem? menu) {
+                    setState(() {
+                      selectedMenu = menu;
+                    });
+                  },
                 ),
               ),
               CustomButton(
-                onTap: onTap,
+                onTap: () => _createRoom(),
                 color: theme.primaryColor,
                 borderRadius: BorderRadius.circular(16),
                 child: Text(
@@ -79,5 +95,45 @@ class CreateRoomWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _createRoom() {
+    if (selectedMenu != null) {
+      try {
+        final roomName = widget.roomNameController.text;
+        final userCountText = widget.maxUserCountController.text;
+        final userCount = int.tryParse(userCountText);
+
+        if (userCount == null) {
+          print('Invalid user count: $userCountText');
+          return;
+        }
+
+        final roomLanguage = LanguagesModel(
+          name: selectedMenu!.label,
+          code: selectedMenu!.code,
+        );
+
+        final roomModel = RoomModel(
+          id: '',
+          roomName: roomName,
+          roomLanguage: roomLanguage,
+          roomUsersList: [],
+          maxUserInRoom: userCount,
+          createTimeRoom: DateTime.now(),
+        );
+
+        context
+            .read<RoomBloc>()
+            .add(CreateRoomEvent(createRoomModel: roomModel));
+        print('Room model created successfully: ${roomModel.toJson()}');
+        AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
+            predicate: (route) => false);
+      } catch (e) {
+        print('Error creating room model: $e');
+      }
+    } else {
+      print('No menu selected');
+    }
   }
 }

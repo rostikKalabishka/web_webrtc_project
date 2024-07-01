@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 
 class CustomRoomWidget extends StatelessWidget {
   const CustomRoomWidget({
     super.key,
+    required this.room,
   });
+
+  final RoomModel room;
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +26,18 @@ class CustomRoomWidget extends StatelessWidget {
               children: [
                 Row(children: [
                   Text(
-                    'Українська',
+                    room.roomLanguage.name,
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    '1/2',
+                    '${room.roomUsersList.length}/${room.maxUserInRoom}',
                     style: theme.textTheme.titleMedium,
                   ),
                 ]),
-                Text('Room name',
+                Text(room.roomName,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyLarge),
                 const Text('21 h')

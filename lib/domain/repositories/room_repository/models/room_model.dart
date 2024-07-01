@@ -54,7 +54,14 @@ class RoomModel extends Equatable {
     );
   }
 
-  Map<String, dynamic> toJson() => _$RoomModelToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'id': id,
+        'roomName': roomName,
+        'roomLanguage': roomLanguage.toJson(),
+        'roomUsersList': roomUsersList,
+        'maxUserInRoom': maxUserInRoom,
+        'createTimeRoom': createTimeRoom.toIso8601String(),
+      };
 
   factory RoomModel.fromJson(Map<String, dynamic> json) =>
       _$RoomModelFromJson(json);

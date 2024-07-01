@@ -9,11 +9,36 @@ sealed class RoomState extends Equatable {
 
 final class RoomInitial extends RoomState {}
 
-final class RoomListLoaded extends RoomState {}
+final class CreateRoom extends RoomState {}
+
+final class CreateRoomFailure extends RoomState {
+  final Object error;
+
+  const CreateRoomFailure({required this.error});
+
+  @override
+  List<Object> get props => super.props..add(error);
+}
+
+final class RoomListLoaded extends RoomState {
+  final List<RoomModel> roomsList;
+
+  const RoomListLoaded({required this.roomsList});
+
+  @override
+  List<Object> get props => super.props..add(roomsList);
+}
 
 final class RoomListLoading extends RoomState {}
 
-final class RoomListFailure extends RoomState {}
+final class RoomListFailure extends RoomState {
+  final Object error;
+
+  const RoomListFailure({required this.error});
+
+  @override
+  List<Object> get props => super.props..add(error);
+}
 
 final class RoomLanguagesListLoaded extends RoomState {
   final List<LanguagesModel> languagesList;
