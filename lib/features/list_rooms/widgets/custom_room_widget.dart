@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:webrtc_flutter/common/utils/utils.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 
 class CustomRoomWidget extends StatelessWidget {
@@ -11,6 +13,7 @@ class CustomRoomWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Utils utils = Utils();
     final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
@@ -40,7 +43,7 @@ class CustomRoomWidget extends StatelessWidget {
                 Text(room.roomName,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyLarge),
-                const Text('21 h')
+                Text(utils.calculateTimeAgo(room.createTimeRoom))
               ],
             ),
             const CircleAvatar(

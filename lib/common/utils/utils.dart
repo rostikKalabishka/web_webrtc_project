@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Utils {
   String? usernameValidator(String? val) {
@@ -14,6 +15,15 @@ class Utils {
       return 'Please fill in this field';
     } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{1,}$').hasMatch(val)) {
       return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? onlyNumber(String? val) {
+    if (val!.isEmpty) {
+      return 'Please fill in this field';
+    } else if (!RegExp(r'^[0-9]$').hasMatch(val)) {
+      return 'Please enter only number';
     }
     return null;
   }
@@ -49,5 +59,19 @@ class Utils {
         ),
       ),
     );
+  }
+
+  String calculateTimeAgo(DateTime createTimeRoom) {
+    Duration difference = DateTime.now().difference(createTimeRoom);
+
+    if (difference.inSeconds < 60) {
+      return 'just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}  minutes ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hours ago';
+    } else {
+      return DateFormat.yMMMd().format(createTimeRoom);
+    }
   }
 }

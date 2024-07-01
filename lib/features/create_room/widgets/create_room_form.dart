@@ -62,7 +62,7 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
                 keyboardType: TextInputType.emailAddress,
               ),
               CustomTextField(
-                validator: (value) => widget.utils.passwordValidator(value),
+                validator: (value) => widget.utils.onlyNumber(value),
                 hintText: 'Enter user count',
                 controller: widget.maxUserCountController,
                 keyboardType: TextInputType.name,
@@ -98,7 +98,7 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
   }
 
   void _createRoom() {
-    if (selectedMenu != null) {
+    if (selectedMenu != null && widget.formKey.currentState!.validate()) {
       try {
         final roomName = widget.roomNameController.text;
         final userCountText = widget.maxUserCountController.text;

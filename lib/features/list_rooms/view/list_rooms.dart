@@ -54,15 +54,7 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
                         child: SearchRoomWidget(
                           searchController: searchController,
                           onChanged: (String text) {
-                            if (text.isNotEmpty) {
-                              context
-                                  .read<RoomBloc>()
-                                  .add(SearchRooms(roomName: text));
-                            } else if (text.isEmpty) {
-                              context
-                                  .read<RoomBloc>()
-                                  .add(RoomListLoadedEvent());
-                            }
+                            searchRooms(text, context);
                           },
                         ),
                       )),
@@ -96,6 +88,14 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
         }
       },
     );
+  }
+
+  void searchRooms(String text, BuildContext context) {
+    if (text.isNotEmpty) {
+      context.read<RoomBloc>().add(SearchRooms(roomName: text));
+    } else if (text.isEmpty) {
+      context.read<RoomBloc>().add(RoomListLoadedEvent());
+    }
   }
 
   void _navigateTo(PageRouteInfo<dynamic> route) {
