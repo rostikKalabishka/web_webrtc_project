@@ -25,7 +25,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   void initState() {
     maxUserCountController = TextEditingController(text: '2');
     roomNameController = TextEditingController();
-    // context.read<RoomBloc>().add(GetLanguagesList());
+    context.read<RoomBloc>().add(GetLanguagesList());
 
     super.initState();
   }

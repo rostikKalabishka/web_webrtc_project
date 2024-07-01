@@ -4,8 +4,10 @@ class SearchRoomWidget extends StatelessWidget {
   const SearchRoomWidget({
     super.key,
     required this.searchController,
+    required this.onChanged,
   });
   final TextEditingController searchController;
+  final Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +20,7 @@ class SearchRoomWidget extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       width: double.infinity,
       child: TextFormField(
+        onChanged: onChanged,
         controller: searchController,
         decoration: InputDecoration(
             hintText: 'Search Room',

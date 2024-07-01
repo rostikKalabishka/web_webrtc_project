@@ -53,6 +53,17 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
                         preferredSize: const Size.fromHeight(80),
                         child: SearchRoomWidget(
                           searchController: searchController,
+                          onChanged: (String text) {
+                            if (text.isNotEmpty) {
+                              context
+                                  .read<RoomBloc>()
+                                  .add(SearchRooms(roomName: text));
+                            } else if (text.isEmpty) {
+                              context
+                                  .read<RoomBloc>()
+                                  .add(RoomListLoadedEvent());
+                            }
+                          },
                         ),
                       )),
                   SliverList.separated(

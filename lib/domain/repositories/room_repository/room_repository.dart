@@ -57,4 +57,19 @@ class RoomRepository implements RoomRepositoryInterface {
       rethrow;
     }
   }
+
+  @override
+  Future<List<RoomModel>> searchRooms(String query) async {
+    try {
+      var snapshot = await roomsCollection.get();
+
+      var filteredDocs = snapshot.docs
+          .where((doc) => doc.data()['roomName'].toString().contains(query));
+
+      return filteredDocs.map((doc) => RoomModel.fromJson(doc.data())).toList();
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
+  }
 }

@@ -16,9 +16,6 @@ class SingInBloc extends Bloc<SingInEvent, SingInState> {
       if (event is SingInRequired) {
         await _singIn(event, emit);
       }
-      // else if (event is SingOut) {
-      //   await _singOut(event, emit);
-      // }
     });
   }
 

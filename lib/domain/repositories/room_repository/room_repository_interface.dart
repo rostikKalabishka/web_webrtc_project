@@ -9,4 +9,6 @@ abstract interface class RoomRepositoryInterface {
   Future<void> joinToRoom(RoomModel roomModel);
 
   Future<List<LanguagesModel>> getAllLanguage();
+
+  Future<List<RoomModel>> searchRooms(String query);
 }

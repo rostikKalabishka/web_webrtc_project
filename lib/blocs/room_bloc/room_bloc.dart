@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -12,6 +13,7 @@ part 'room_state.dart';
 
 class RoomBloc extends Bloc<RoomEvent, RoomState> {
   final RoomRepository _roomRepository;
+  Timer? searchDebounce;
   RoomBloc({required RoomRepository roomRepository})
       : _roomRepository = roomRepository,
         super(RoomInitial()) {
@@ -22,6 +24,8 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
         await _createRoom(event, emit);
       } else if (event is RoomListLoadedEvent) {
         await _loadRoomList(event, emit);
+      } else if (event is SearchRooms) {
+        await _searchRoomQuery(event, emit);
       }
     });
   }
@@ -52,6 +56,25 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
     try {
       final List<RoomModel> roomsList = await _roomRepository.getAllRooms();
       emit(RoomListLoaded(roomsList: roomsList));
+    } catch (e) {
+      emit(RoomListFailure(error: e));
+    }
+  }
+
+  Future<void> _searchRoomQuery(SearchRooms event, emit) async {
+    try {
+      searchDebounce?.cancel();
+
+      final completer = Completer<void>();
+      searchDebounce = Timer(const Duration(milliseconds: 200), () async {
+        final roomsList = await _roomRepository.searchRooms(event.roomName);
+
+        emit(RoomListLoaded(roomsList: roomsList));
+
+        completer.complete();
+      });
+
+      await completer.future;
     } catch (e) {
       emit(RoomListFailure(error: e));
     }
