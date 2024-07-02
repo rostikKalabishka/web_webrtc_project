@@ -22,10 +22,6 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
         await _getLanguages(event, emit);
       } else if (event is CreateRoomEvent) {
         await _createRoom(event, emit);
-      } else if (event is RoomListLoadedEvent) {
-        await _loadRoomList(event, emit);
-      } else if (event is SearchRooms) {
-        await _searchRoomQuery(event, emit);
       }
     });
   }
@@ -46,35 +42,6 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
   Future<void> _createRoom(CreateRoomEvent event, emit) async {
     try {
       await _roomRepository.createRoom(event.createRoomModel);
-    } catch (e) {
-      emit(RoomListFailure(error: e));
-    }
-  }
-
-  Future<void> _loadRoomList(RoomListLoadedEvent event, emit) async {
-    emit(RoomListLoading());
-    try {
-      final List<RoomModel> roomsList = await _roomRepository.getAllRooms();
-      emit(RoomListLoaded(roomsList: roomsList));
-    } catch (e) {
-      emit(RoomListFailure(error: e));
-    }
-  }
-
-  Future<void> _searchRoomQuery(SearchRooms event, emit) async {
-    try {
-      searchDebounce?.cancel();
-
-      final completer = Completer<void>();
-      searchDebounce = Timer(const Duration(milliseconds: 200), () async {
-        final roomsList = await _roomRepository.searchRooms(event.roomName);
-
-        emit(RoomListLoaded(roomsList: roomsList));
-
-        completer.complete();
-      });
-
-      await completer.future;
     } catch (e) {
       emit(RoomListFailure(error: e));
     }

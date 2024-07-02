@@ -1,7 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:webrtc_flutter/blocs/room_bloc/room_bloc.dart';
+import 'package:webrtc_flutter/blocs/room_list_bloc/room_list_bloc.dart';
+
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/router/router.dart';
 
@@ -21,12 +22,12 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
   void initState() {
     searchController = TextEditingController();
     super.initState();
-    context.read<RoomBloc>().add(RoomListLoadedEvent());
+    context.read<RoomListBloc>().add(RoomListLoadEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RoomBloc, RoomState>(
+    return BlocBuilder<RoomListBloc, RoomListState>(
       builder: (BuildContext context, state) {
         if (state is RoomListLoaded) {
           final List<RoomModel> roomsList = state.roomsList;
@@ -92,9 +93,9 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
 
   void searchRooms(String text, BuildContext context) {
     if (text.isNotEmpty) {
-      context.read<RoomBloc>().add(SearchRooms(roomName: text));
+      context.read<RoomListBloc>().add(SearchRooms(roomName: text));
     } else if (text.isEmpty) {
-      context.read<RoomBloc>().add(RoomListLoadedEvent());
+      context.read<RoomListBloc>().add(RoomListLoadEvent());
     }
   }
 

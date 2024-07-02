@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:webrtc_flutter/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:webrtc_flutter/blocs/room_list_bloc/room_list_bloc.dart';
 
 import 'package:webrtc_flutter/blocs/sing_in_bloc/sing_in_bloc.dart';
 import 'package:webrtc_flutter/blocs/sing_up_bloc/sign_up_bloc.dart';
@@ -40,12 +41,15 @@ class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
     final userBloc = UserBloc(myUserRepository: userRepository);
     final themeCubit = ThemeCubit(settingsRepository: settingsRepository);
     final RoomBloc roomBloc = RoomBloc(roomRepository: roomRepository);
+    final RoomListBloc roomListBloc =
+        RoomListBloc(roomRepository: roomRepository);
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => singInBloc),
         BlocProvider(create: (_) => signUpBloc),
         BlocProvider(create: (_) => themeCubit),
         BlocProvider(create: (_) => roomBloc),
+        BlocProvider(create: (_) => roomListBloc),
         BlocProvider(
             create: (_) => userBloc
               ..add(GetCurrentUser(

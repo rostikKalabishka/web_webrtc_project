@@ -51,15 +51,6 @@ final class RoomLanguagesListLoaded extends RoomState {
 
 final class RoomLanguagesLoading extends RoomState {}
 
-class SearchRoomsList extends RoomState {
-  final List<RoomModel> searchRoomsList;
-
-  const SearchRoomsList({required this.searchRoomsList});
-
-  @override
-  List<Object> get props => super.props..add(searchRoomsList);
-}
-
 final class RoomLanguagesListFailure extends RoomState {
   final Object error;
 
