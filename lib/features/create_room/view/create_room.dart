@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webrtc_flutter/blocs/create_room_bloc/create_room_bloc.dart';
 import 'package:webrtc_flutter/blocs/room_bloc/room_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
+import 'package:webrtc_flutter/router/router.dart';
 
 import '../widgets/widgets.dart';
 
@@ -25,7 +27,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   void initState() {
     maxUserCountController = TextEditingController(text: '2');
     roomNameController = TextEditingController();
-    context.read<RoomBloc>().add(GetLanguagesList());
 
     super.initState();
   }
@@ -41,9 +42,12 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width * 0.82;
     final TextEditingController menuController = TextEditingController();
-    return BlocConsumer<RoomBloc, RoomState>(
+    return BlocConsumer<CreateRoomBloc, CreateRoomState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is CreateRoomInSuccess) {
+          AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
+              predicate: (route) => false);
+        }
       },
       builder: (context, state) {
         if (state is RoomLanguagesListLoaded) {
@@ -74,8 +78,10 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
             ),
           );
         } else {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(),
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator.adaptive(),
+            ),
           );
         }
       },

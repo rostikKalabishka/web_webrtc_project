@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webrtc_flutter/blocs/create_room_bloc/create_room_bloc.dart';
 import 'package:webrtc_flutter/blocs/room_bloc/room_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
@@ -124,11 +125,9 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
         );
 
         context
-            .read<RoomBloc>()
-            .add(CreateRoomEvent(createRoomModel: roomModel));
+            .read<CreateRoomBloc>()
+            .add(CreateRoom(createRoomModel: roomModel));
         print('Room model created successfully: ${roomModel.toJson()}');
-        AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
-            predicate: (route) => false);
       } catch (e) {
         print('Error creating room model: $e');
       }

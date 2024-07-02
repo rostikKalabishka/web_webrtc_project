@@ -13,8 +13,6 @@ class RoomListLoadedEvent extends RoomEvent {}
 
 class RoomConnect extends RoomEvent {}
 
-class GetLanguagesList extends RoomEvent {}
-
 class CreateRoomEvent extends RoomEvent {
   final RoomModel createRoomModel;
 
