@@ -17,3 +17,13 @@ class SearchRooms extends RoomListEvent {
   @override
   List<Object> get props => super.props..add(roomName);
 }
+
+class JoinRoomEvent extends RoomListEvent {
+  final RoomModel roomModel;
+  final RTCVideoRenderer remoteVideo;
+
+  const JoinRoomEvent({required this.roomModel, required this.remoteVideo});
+
+  @override
+  List<Object> get props => super.props..addAll([roomModel, remoteVideo]);
+}

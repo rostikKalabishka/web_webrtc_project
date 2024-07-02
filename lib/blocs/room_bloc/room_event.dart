@@ -7,6 +7,35 @@ sealed class RoomEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class RoomCreate extends RoomEvent {}
+class OpenMicrophone extends RoomEvent {
+  final RTCVideoRenderer localVideo;
+  final RTCVideoRenderer remoteVideo;
+  final bool openMic;
+  final bool openCamera;
 
-class RoomConnect extends RoomEvent {}
+  const OpenMicrophone(
+      {required this.localVideo,
+      required this.remoteVideo,
+      required this.openMic,
+      required this.openCamera});
+
+  @override
+  List<Object> get props =>
+      super.props..addAll([localVideo, remoteVideo, openMic, openCamera]);
+}
+
+class OpenCamera extends RoomEvent {
+  final RTCVideoRenderer localVideo;
+  final RTCVideoRenderer remoteVideo;
+  final bool openMic;
+  final bool openCamera;
+
+  const OpenCamera(
+      {required this.localVideo,
+      required this.remoteVideo,
+      required this.openMic,
+      required this.openCamera});
+  @override
+  List<Object> get props =>
+      super.props..addAll([localVideo, remoteVideo, openMic, openCamera]);
+}

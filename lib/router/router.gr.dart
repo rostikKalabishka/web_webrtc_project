@@ -58,6 +58,7 @@ abstract class _$AppRouter extends RootStackRouter {
         child: RoomScreen(
           key: args.key,
           roomModel: args.roomModel,
+          remoteRenderer: args.remoteRenderer,
         ),
       );
     },
@@ -160,12 +161,14 @@ class RoomRoute extends PageRouteInfo<RoomRouteArgs> {
   RoomRoute({
     Key? key,
     required RoomModel roomModel,
+    required RTCVideoRenderer remoteRenderer,
     List<PageRouteInfo>? children,
   }) : super(
           RoomRoute.name,
           args: RoomRouteArgs(
             key: key,
             roomModel: roomModel,
+            remoteRenderer: remoteRenderer,
           ),
           initialChildren: children,
         );
@@ -179,15 +182,18 @@ class RoomRouteArgs {
   const RoomRouteArgs({
     this.key,
     required this.roomModel,
+    required this.remoteRenderer,
   });
 
   final Key? key;
 
   final RoomModel roomModel;
 
+  final RTCVideoRenderer remoteRenderer;
+
   @override
   String toString() {
-    return 'RoomRouteArgs{key: $key, roomModel: $roomModel}';
+    return 'RoomRouteArgs{key: $key, roomModel: $roomModel, remoteRenderer: $remoteRenderer}';
   }
 }
 

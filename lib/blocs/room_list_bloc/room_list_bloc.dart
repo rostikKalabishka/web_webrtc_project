@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
@@ -20,6 +21,8 @@ class RoomListBloc extends Bloc<RoomListEvent, RoomListState> {
         await _loadRoomList(event, emit);
       } else if (event is SearchRooms) {
         await _searchRoomQuery(event, emit);
+      } else if (event is JoinRoomEvent) {
+        await _joinRoom(event, emit);
       }
     }, transformer: (events, mapper) => events.asyncExpand(mapper));
   }
@@ -50,6 +53,16 @@ class RoomListBloc extends Bloc<RoomListEvent, RoomListState> {
       });
 
       await completer.future;
+    } catch (e) {
+      emit(RoomListFailure(error: e));
+    }
+  }
+
+  Future<void> _joinRoom(JoinRoomEvent event, emit) async {
+    emit(JoinRoomInProcess());
+    try {
+      await _roomRepository.joinRoom(event.roomModel, event.remoteVideo);
+      emit(JoinRoomInSuccess());
     } catch (e) {
       emit(RoomListFailure(error: e));
     }

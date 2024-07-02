@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:webrtc_flutter/blocs/room_list_bloc/room_list_bloc.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
@@ -18,6 +19,7 @@ class ListRoomsScreen extends StatefulWidget {
 
 class _ListRoomsScreenState extends State<ListRoomsScreen> {
   late TextEditingController searchController;
+  RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   @override
   void initState() {
     searchController = TextEditingController();
@@ -27,7 +29,8 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RoomListBloc, RoomListState>(
+    late RoomModel currentRoom;
+    return BlocConsumer<RoomListBloc, RoomListState>(
       builder: (BuildContext context, state) {
         if (state is RoomListLoaded) {
           final List<RoomModel> roomsList = state.roomsList;
@@ -62,9 +65,12 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
                   SliverList.separated(
                       itemCount: roomsList.length,
                       itemBuilder: (context, index) {
+                        currentRoom = roomsList[index];
                         return GestureDetector(
                           onTap: () {
-                            _navigateTo(RoomRoute(roomModel: roomsList[index]));
+                            context.read<RoomListBloc>().add(JoinRoomEvent(
+                                remoteVideo: remoteRenderer,
+                                roomModel: currentRoom));
                           },
                           child: CustomRoomWidget(
                             room: roomsList[index],
@@ -88,6 +94,12 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
           return const Center(
             child: CircularProgressIndicator.adaptive(),
           );
+        }
+      },
+      listener: (BuildContext context, RoomListState state) {
+        if (state is JoinRoomInSuccess) {
+          _navigateTo(RoomRoute(
+              roomModel: currentRoom, remoteRenderer: remoteRenderer));
         }
       },
     );

@@ -29,6 +29,10 @@ final class RoomListFailure extends RoomListState {
   List<Object> get props => super.props..add(error);
 }
 
+final class JoinRoomInProcess extends RoomListState {}
+
+final class JoinRoomInSuccess extends RoomListState {}
+
 final class SearchRoomList extends RoomListState {
   final List<RoomModel> roomsList;
 
