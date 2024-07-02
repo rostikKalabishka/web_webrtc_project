@@ -63,7 +63,9 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
                       itemCount: roomsList.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            _navigateTo(RoomRoute(roomModel: roomsList[index]));
+                          },
                           child: CustomRoomWidget(
                             room: roomsList[index],
                           ),

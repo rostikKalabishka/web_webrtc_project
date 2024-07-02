@@ -10,10 +10,6 @@ class LoaderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        // listener: (context, state) {
-        //   navigateTo(context, state);
-        // },
-
         builder: (context, state) {
       navigateTo(context, state);
       return const Scaffold(

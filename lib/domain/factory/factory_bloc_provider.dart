@@ -51,7 +51,7 @@ class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
         BlocProvider(create: (_) => themeCubit),
         BlocProvider(create: (_) => roomBloc),
         BlocProvider(create: (_) => roomListBloc),
-        BlocProvider(create: (_) => createRoomBloc..add(GetLanguagesList())),
+        BlocProvider(create: (_) => createRoomBloc),
         BlocProvider(
             create: (_) => userBloc
               ..add(GetCurrentUser(
