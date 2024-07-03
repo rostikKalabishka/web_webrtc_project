@@ -36,7 +36,9 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
           final List<RoomModel> roomsList = state.roomsList;
           return Scaffold(
             body: RefreshIndicator.adaptive(
-              onRefresh: () async {},
+              onRefresh: () async {
+                context.read<RoomListBloc>().add(RoomListLoadEvent());
+              },
               child: CustomScrollView(
                 slivers: [
                   SliverAppBar(

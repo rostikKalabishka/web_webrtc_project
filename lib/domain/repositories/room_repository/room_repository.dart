@@ -42,7 +42,7 @@ class RoomRepository implements RoomRepositoryInterface {
     DocumentReference roomRef = roomsCollection.doc(roomModel.id);
 
     try {
-      print('Create PeerConnection with configuration: $configuration');
+      log('Create PeerConnection with configuration: $configuration');
 
       peerConnection = await createPeerConnection(configuration);
 
@@ -57,7 +57,7 @@ class RoomRepository implements RoomRepositoryInterface {
       var callerCandidatesCollection = roomRef.collection('callerCandidates');
 
       peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
-        print('Got candidate: ${candidate.toMap()}');
+        log('Got candidate: ${candidate.toMap()}');
         callerCandidatesCollection.add(candidate.toMap());
       };
       // Finish Code for collecting ICE candidate
@@ -74,16 +74,16 @@ class RoomRepository implements RoomRepositoryInterface {
       await roomRef.set(roomWithOffer);
 
       peerConnection?.onTrack = (RTCTrackEvent event) {
-        print('Got remote track: ${event.streams[0]}');
+        log('Got remote track: ${event.streams[0]}');
 
         event.streams[0].getTracks().forEach((track) {
-          print('Add a track to the remoteStream $track');
+          log('Add a track to the remoteStream $track');
           remoteStream?.addTrack(track);
         });
       };
 
       roomRef.snapshots().listen((snapshot) async {
-        print('Got updated room: ${snapshot.data()}');
+        log('Got updated room: ${snapshot.data()}');
 
         Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
         if (peerConnection?.getRemoteDescription() != null &&
@@ -93,7 +93,7 @@ class RoomRepository implements RoomRepositoryInterface {
             data['answer']['type'],
           );
 
-          print("Someone tried to connect");
+          log("Someone tried to connect");
           await peerConnection?.setRemoteDescription(answer);
         }
       });
@@ -105,7 +105,7 @@ class RoomRepository implements RoomRepositoryInterface {
           if (change.type == DocumentChangeType.added) {
             Map<String, dynamic> data =
                 change.doc.data() as Map<String, dynamic>;
-            print('Got new remote ICE candidate: ${jsonEncode(data)}');
+            log('Got new remote ICE candidate: ${jsonEncode(data)}');
             peerConnection!.addCandidate(
               RTCIceCandidate(
                 data['candidate'],
@@ -138,9 +138,9 @@ class RoomRepository implements RoomRepositoryInterface {
       RoomModel roomModel, RTCVideoRenderer remoteVideo) async {
     DocumentReference roomRef = roomsCollection.doc(roomModel.id);
     var roomSnapshot = await roomRef.get();
-    print('Got room ${roomSnapshot.exists}');
+    log('Got room ${roomSnapshot.exists}');
     if (roomSnapshot.exists) {
-      print('Create PeerConnection with configuration: $configuration');
+      log('Create PeerConnection with configuration: $configuration');
       peerConnection = await createPeerConnection(configuration);
 
       registerPeerConnectionListeners();
@@ -153,30 +153,30 @@ class RoomRepository implements RoomRepositoryInterface {
       var calleeCandidatesCollection = roomRef.collection('calleeCandidates');
       peerConnection!.onIceCandidate = (RTCIceCandidate? candidate) {
         if (candidate == null) {
-          print('onIceCandidate: complete!');
+          log('onIceCandidate: complete!');
           return;
         }
-        print('onIceCandidate: ${candidate.toMap()}');
+        log('onIceCandidate: ${candidate.toMap()}');
         calleeCandidatesCollection.add(candidate.toMap());
       };
       // Code for collecting ICE candidate above
 
       peerConnection?.onTrack = (RTCTrackEvent event) {
-        print('Got remote track: ${event.streams[0]}');
+        log('Got remote track: ${event.streams[0]}');
         event.streams[0].getTracks().forEach((track) {
-          print('Add a track to the remoteStream: $track');
+          log('Add a track to the remoteStream: $track');
           remoteStream?.addTrack(track);
         });
       };
 
       var data = roomSnapshot.data() as Map<String, dynamic>;
-      print('Got offer $data');
+      log('Got offer $data');
       var offer = data['offer'];
       await peerConnection?.setRemoteDescription(
         RTCSessionDescription(offer['sdp'], offer['type']),
       );
       var answer = await peerConnection!.createAnswer();
-      print('Created Answer $answer');
+      log('Created Answer $answer');
 
       await peerConnection!.setLocalDescription(answer);
 
@@ -192,8 +192,8 @@ class RoomRepository implements RoomRepositoryInterface {
       roomRef.collection('callerCandidates').snapshots().listen((snapshot) {
         snapshot.docChanges.forEach((document) {
           var data = document.doc.data() as Map<String, dynamic>;
-          print(data);
-          print('Got new remote ICE candidate: $data');
+          log(data.toString());
+          log('Got new remote ICE candidate: $data');
           peerConnection!.addCandidate(
             RTCIceCandidate(
               data['candidate'],
@@ -238,34 +238,44 @@ class RoomRepository implements RoomRepositoryInterface {
       required RTCVideoRenderer remoteVideo,
       required bool openMic,
       required bool openCamera}) async {
-    var stream = await navigator.mediaDevices
-        .getUserMedia({'video': openCamera, 'audio': openMic});
+    try {
+      var stream = await navigator.mediaDevices
+          .getUserMedia({'video': openCamera, 'audio': openMic});
 
-    localVideo.srcObject = stream;
-    localStream = stream;
+      localVideo.srcObject = stream;
+      localStream = stream;
 
-    remoteVideo.srcObject = await createLocalMediaStream('key');
+      // Add the stream to peerConnection
+      stream.getTracks().forEach((track) {
+        peerConnection?.addTrack(track, stream);
+      });
+
+      remoteVideo.srcObject = await createLocalMediaStream('key');
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
 
   void registerPeerConnectionListeners() {
     peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
-      print('ICE gathering state changed: $state');
+      log('ICE gathering state changed: $state');
     };
 
     peerConnection?.onConnectionState = (RTCPeerConnectionState state) {
-      print('Connection state change: $state');
+      log('Connection state change: $state');
     };
 
     peerConnection?.onSignalingState = (RTCSignalingState state) {
-      print('Signaling state change: $state');
+      log('Signaling state change: $state');
     };
 
     peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
-      print('ICE connection state change: $state');
+      log('ICE connection state change: $state');
     };
 
     peerConnection?.onAddStream = (MediaStream stream) {
-      print("Add remote stream");
+      log("Add remote stream");
       onAddRemoteStream?.call(stream);
       remoteStream = stream;
     };

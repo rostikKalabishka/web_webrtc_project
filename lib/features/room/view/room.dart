@@ -20,8 +20,8 @@ class RoomScreen extends StatefulWidget {
 class _RoomScreenState extends State<RoomScreen> {
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   // RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
-  bool isVideoOn = false;
-  bool isAudioOn = false;
+  bool isVideoOn = true;
+  bool isAudioOn = true;
   @override
   void initState() {
     _localRenderer.initialize();
@@ -33,6 +33,12 @@ class _RoomScreenState extends State<RoomScreen> {
   void dispose() {
     _localRenderer.dispose();
     widget.remoteRenderer.dispose();
+
+    context.read<RoomBloc>().add(OpenCamera(
+        localVideo: _localRenderer,
+        remoteVideo: widget.remoteRenderer,
+        openMic: isAudioOn,
+        openCamera: isVideoOn));
     super.dispose();
   }
 
@@ -42,28 +48,30 @@ class _RoomScreenState extends State<RoomScreen> {
       return Scaffold(
         body: Column(
           children: [
-            Expanded(
-              child: Stack(children: [
-                RTCVideoView(
-                  widget.remoteRenderer,
-                  objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                ),
-                Positioned(
-                  right: 20,
-                  bottom: 20,
-                  child: SizedBox(
-                    height: 150,
-                    width: 120,
-                    child: RTCVideoView(
-                      _localRenderer,
-                      mirror: true,
-                      objectFit:
-                          RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                    ),
-                  ),
-                )
-              ]),
-            ),
+            // Expanded(
+            //   child: Stack(children: [
+            //     RTCVideoView(
+            //       widget.remoteRenderer,
+            //       objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+            //     ),
+            //     Positioned(
+            //       right: 20,
+            //       bottom: 20,
+            //       child: SizedBox(
+            //         height: 150,
+            //         width: 120,
+            //         child: RTCVideoView(
+            //           _localRenderer,
+            //           mirror: true,
+            //           objectFit:
+            //               RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+            //         ),
+            //       ),
+            //     )
+            //   ]),
+            // ),
+            Expanded(child: RTCVideoView(_localRenderer, mirror: true)),
+            Expanded(child: RTCVideoView(widget.remoteRenderer)),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
