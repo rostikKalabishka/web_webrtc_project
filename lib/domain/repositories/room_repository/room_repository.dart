@@ -232,21 +232,6 @@ class RoomRepository implements RoomRepositoryInterface {
     }
   }
 
-  // @override
-  // Future<void> switchCamera(bool isFrontCameraSelected) async {
-  //   try {
-  //     isFrontCameraSelected = !isFrontCameraSelected;
-
-  //     localStream?.getVideoTracks().forEach((track) {
-  //       // ignore: deprecated_member_use
-  //       track.switchCamera();
-  //     });
-  //   } catch (e) {
-  //     log(e.toString());
-  //     rethrow;
-  //   }
-  // }
-
   @override
   Future<void> openUserMedia(
       {required RTCVideoRenderer localVideo,

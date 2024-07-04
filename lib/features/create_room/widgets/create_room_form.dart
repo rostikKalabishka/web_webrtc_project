@@ -86,7 +86,7 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
                 borderRadius: BorderRadius.circular(16),
                 child: Text(
                   'Create room',
-                  style: theme.textTheme.bodyLarge
+                  style: theme.textTheme.headlineSmall
                       ?.copyWith(fontWeight: FontWeight.bold),
                 ),
               )
