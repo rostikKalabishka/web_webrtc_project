@@ -44,9 +44,6 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     return BlocConsumer<CreateRoomBloc, CreateRoomState>(
       listener: (context, state) {
         if (state is CreateRoomInSuccess) {
-          // AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
-          //     predicate: (route) => false);
-
           AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
               predicate: (route) => false);
         }

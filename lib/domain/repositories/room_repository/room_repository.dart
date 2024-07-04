@@ -232,15 +232,35 @@ class RoomRepository implements RoomRepositoryInterface {
     }
   }
 
+  // @override
+  // Future<void> switchCamera(bool isFrontCameraSelected) async {
+  //   try {
+  //     isFrontCameraSelected = !isFrontCameraSelected;
+
+  //     localStream?.getVideoTracks().forEach((track) {
+  //       // ignore: deprecated_member_use
+  //       track.switchCamera();
+  //     });
+  //   } catch (e) {
+  //     log(e.toString());
+  //     rethrow;
+  //   }
+  // }
+
   @override
   Future<void> openUserMedia(
       {required RTCVideoRenderer localVideo,
       required RTCVideoRenderer remoteVideo,
       required bool openMic,
-      required bool openCamera}) async {
+      required bool openCamera,
+      required bool isFrontCameraSelected}) async {
     try {
-      var stream = await navigator.mediaDevices
-          .getUserMedia({'video': openCamera, 'audio': openMic});
+      var stream = await navigator.mediaDevices.getUserMedia({
+        'video': openCamera,
+        'audio': openMic
+            ? {'facingMode': isFrontCameraSelected ? 'user' : 'environment'}
+            : false,
+      });
 
       localVideo.srcObject = stream;
       localStream = stream;
@@ -280,4 +300,6 @@ class RoomRepository implements RoomRepositoryInterface {
       remoteStream = stream;
     };
   }
+
+  switchCamera(bool isFrontCameraSelected) {}
 }

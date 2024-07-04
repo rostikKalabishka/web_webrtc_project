@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -18,6 +20,8 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
         await _openMicrophone(event, emit);
       } else if (event is OpenCamera) {
         await _openCamera(event, emit);
+      } else if (event is SwitchCamera) {
+        await _switchCamera(event, emit);
       }
     }, transformer: (events, mapper) => events.asyncExpand(mapper));
   }
@@ -28,9 +32,27 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
           localVideo: event.localVideo,
           remoteVideo: event.remoteVideo,
           openMic: event.openMic,
-          openCamera: event.openCamera);
+          openCamera: event.openCamera,
+          isFrontCameraSelected: event.isFrontCameraSelected);
       emit(OpenCameraSuccess());
     } catch (e) {
+      emit(RoomFailure(error: e));
+    }
+  }
+
+  Future<void> _switchCamera(SwitchCamera event, emit) async {
+    emit(SwitchCameraInProcess());
+    try {
+      await _roomRepository.openUserMedia(
+          localVideo: event.localVideo,
+          remoteVideo: event.remoteVideo,
+          openMic: event.openMic,
+          openCamera: event.openCamera,
+          isFrontCameraSelected: event.isFrontCameraSelected);
+
+      emit(SwitchCameraSuccess());
+    } catch (e) {
+      log(e.toString());
       emit(RoomFailure(error: e));
     }
   }
@@ -42,7 +64,8 @@ class RoomBloc extends Bloc<RoomEvent, RoomState> {
           localVideo: event.localVideo,
           remoteVideo: event.remoteVideo,
           openMic: event.openMic,
-          openCamera: event.openCamera);
+          openCamera: event.openCamera,
+          isFrontCameraSelected: event.isFrontCameraSelected);
       emit(OpenMicrophoneSuccess());
     } catch (e) {
       emit(RoomFailure(error: e));

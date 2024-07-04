@@ -26,6 +26,10 @@ final class OpenInMicrophoneProcess extends RoomState {}
 
 final class OpenMicrophoneSuccess extends RoomState {}
 
+final class SwitchCameraInProcess extends RoomState {}
+
+final class SwitchCameraSuccess extends RoomState {}
+
 final class RoomLoaded extends RoomState {}
 
 final class RoomLoading extends RoomState {}

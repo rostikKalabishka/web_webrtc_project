@@ -17,5 +17,8 @@ abstract interface class RoomRepositoryInterface {
       {required RTCVideoRenderer localVideo,
       required RTCVideoRenderer remoteVideo,
       required bool openMic,
-      required bool openCamera});
+      required bool openCamera,
+      required bool isFrontCameraSelected});
+
+  // Future<void> switchCamera(bool isFrontCameraSelected);
 }
