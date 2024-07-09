@@ -2,10 +2,11 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-
 import 'package:webrtc_flutter/blocs/room_bloc/room_bloc.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
 import 'package:webrtc_flutter/router/router.dart';
+
+import '../../../domain/repositories/room_repository/room_repository.dart';
 
 @RoutePage()
 class RoomScreen extends StatefulWidget {
@@ -20,28 +21,36 @@ class RoomScreen extends StatefulWidget {
 
 class _RoomScreenState extends State<RoomScreen> {
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
-  // RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
   bool isVideoOn = false;
   bool isAudioOn = false;
   bool isFrontCameraSelected = false;
+  final RoomRepository roomRepository = RoomRepository();
+
   @override
   void initState() {
-    _localRenderer.initialize();
-    widget.remoteRenderer.initialize();
     super.initState();
+    _initializeRenderers();
+  }
+
+  Future<void> _initializeRenderers() async {
+    await _localRenderer.initialize();
+    await widget.remoteRenderer.initialize();
   }
 
   @override
   void dispose() {
     _localRenderer.dispose();
     widget.remoteRenderer.dispose();
-
-    // context.read<RoomBloc>().add(OpenCamera(
-    //     localVideo: _localRenderer,
-    //     remoteVideo: widget.remoteRenderer,
-    //     openMic: isAudioOn,
-    //     openCamera: isVideoOn));
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    roomRepository.onAddRemoteStream = ((stream) {
+      widget.remoteRenderer.srcObject = stream;
+      setState(() {});
+    });
+    super.didChangeDependencies();
   }
 
   @override
@@ -69,11 +78,9 @@ class _RoomScreenState extends State<RoomScreen> {
                           RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                     ),
                   ),
-                )
+                ),
               ]),
             ),
-            // Expanded(child: RTCVideoView(_localRenderer, mirror: true)),
-            // Expanded(child: RTCVideoView(widget.remoteRenderer)),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),
               child: Row(
@@ -82,45 +89,32 @@ class _RoomScreenState extends State<RoomScreen> {
                   IconButton(
                     icon: Icon(isAudioOn ? Icons.mic : Icons.mic_off),
                     onPressed: () {
-                      isAudioOn = !isAudioOn;
-                      context.read<RoomBloc>().add(OpenMicrophone(
-                          localVideo: _localRenderer,
-                          remoteVideo: widget.remoteRenderer,
-                          openMic: isAudioOn,
-                          openCamera: isVideoOn,
-                          isFrontCameraSelected: isFrontCameraSelected));
+                      setState(() {
+                        isAudioOn = !isAudioOn;
+                      });
+                      _toggleMicrophone();
                     },
                   ),
                   IconButton(
                     icon: Icon(isVideoOn ? Icons.videocam : Icons.videocam_off),
                     onPressed: () {
-                      isVideoOn = !isVideoOn;
-                      context.read<RoomBloc>().add(OpenCamera(
-                          localVideo: _localRenderer,
-                          remoteVideo: widget.remoteRenderer,
-                          openMic: isAudioOn,
-                          openCamera: isVideoOn,
-                          isFrontCameraSelected: isFrontCameraSelected));
+                      setState(() {
+                        isVideoOn = !isVideoOn;
+                      });
+                      _toggleCamera();
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.cameraswitch),
                     onPressed: () {
-                      context.read<RoomBloc>().add(SwitchCamera(
-                          localVideo: _localRenderer,
-                          remoteVideo: widget.remoteRenderer,
-                          openMic: isAudioOn,
-                          openCamera: isVideoOn,
-                          isFrontCameraSelected: isFrontCameraSelected));
+                      _switchCamera();
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.call_end),
                     iconSize: 30,
                     onPressed: () {
-                      AutoRouter.of(context).pushAndPopUntil(
-                          const HomeRouteMobile(),
-                          predicate: (route) => false);
+                      _endCall();
                     },
                   ),
                 ],
@@ -130,5 +124,37 @@ class _RoomScreenState extends State<RoomScreen> {
         ),
       );
     });
+  }
+
+  void _toggleMicrophone() {
+    context.read<RoomBloc>().add(OpenMicrophone(
+        localVideo: _localRenderer,
+        remoteVideo: widget.remoteRenderer,
+        openMic: isAudioOn,
+        openCamera: isVideoOn,
+        isFrontCameraSelected: isFrontCameraSelected));
+  }
+
+  void _toggleCamera() {
+    context.read<RoomBloc>().add(OpenCamera(
+        localVideo: _localRenderer,
+        remoteVideo: widget.remoteRenderer,
+        openMic: isAudioOn,
+        openCamera: isVideoOn,
+        isFrontCameraSelected: isFrontCameraSelected));
+  }
+
+  void _switchCamera() {
+    context.read<RoomBloc>().add(SwitchCamera(
+        localVideo: _localRenderer,
+        remoteVideo: widget.remoteRenderer,
+        openMic: isAudioOn,
+        openCamera: isVideoOn,
+        isFrontCameraSelected: isFrontCameraSelected));
+  }
+
+  void _endCall() {
+    AutoRouter.of(context)
+        .pushAndPopUntil(const HomeRouteMobile(), predicate: (route) => false);
   }
 }

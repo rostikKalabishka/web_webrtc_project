@@ -32,7 +32,6 @@ class RoomRepository implements RoomRepositoryInterface {
 
   final languagesCollection =
       FirebaseFirestore.instance.collection('languages');
-
   @override
   Future<void> createRoom(RoomModel roomModel) async {
     roomModel = roomModel.copyWith(
@@ -53,7 +52,6 @@ class RoomRepository implements RoomRepositoryInterface {
       });
 
       // Code for collecting ICE candidates below
-
       var callerCandidatesCollection = roomRef.collection('callerCandidates');
 
       peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
@@ -85,11 +83,15 @@ class RoomRepository implements RoomRepositoryInterface {
       roomRef.snapshots().listen((snapshot) async {
         log('Got updated room: ${snapshot.data()}');
 
-        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        if (peerConnection?.getRemoteDescription() != null &&
-            data['answer'] != null) {
+        Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+
+        // Check if remote description is set and answer is available
+        if (peerConnection?.signalingState ==
+                RTCSignalingState.RTCSignalingStateStable &&
+            peerConnection?.getRemoteDescription() == null &&
+            data?['answer'] != null) {
           var answer = RTCSessionDescription(
-            data['answer']['sdp'],
+            data!['answer']['sdp'],
             data['answer']['type'],
           );
 
@@ -97,9 +99,8 @@ class RoomRepository implements RoomRepositoryInterface {
           await peerConnection?.setRemoteDescription(answer);
         }
       });
-      // Listening for remote session description above
 
-      // Listen for remote Ice candidates below
+      // Listening for remote ICE candidates below
       roomRef.collection('calleeCandidates').snapshots().listen((snapshot) {
         snapshot.docChanges.forEach((change) {
           if (change.type == DocumentChangeType.added) {
@@ -250,7 +251,6 @@ class RoomRepository implements RoomRepositoryInterface {
       localVideo.srcObject = stream;
       localStream = stream;
 
-      // Add the stream to peerConnection
       stream.getTracks().forEach((track) {
         peerConnection?.addTrack(track, stream);
       });
@@ -285,6 +285,4 @@ class RoomRepository implements RoomRepositoryInterface {
       remoteStream = stream;
     };
   }
-
-  switchCamera(bool isFrontCameraSelected) {}
 }
