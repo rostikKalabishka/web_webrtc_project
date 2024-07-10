@@ -16,9 +16,13 @@ abstract class _$AppRouter extends RootStackRouter {
   @override
   final Map<String, PageFactory> pagesMap = {
     CreateRoomRoute.name: (routeData) {
+      final args = routeData.argsAs<CreateRoomRouteArgs>();
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const CreateRoomScreen(),
+        child: CreateRoomScreen(
+          key: args.key,
+          remoteRenderer: args.remoteRenderer,
+        ),
       );
     },
     HomeRouteMobile.name: (routeData) {
@@ -73,16 +77,40 @@ abstract class _$AppRouter extends RootStackRouter {
 
 /// generated route for
 /// [CreateRoomScreen]
-class CreateRoomRoute extends PageRouteInfo<void> {
-  const CreateRoomRoute({List<PageRouteInfo>? children})
-      : super(
+class CreateRoomRoute extends PageRouteInfo<CreateRoomRouteArgs> {
+  CreateRoomRoute({
+    Key? key,
+    required RTCVideoRenderer remoteRenderer,
+    List<PageRouteInfo>? children,
+  }) : super(
           CreateRoomRoute.name,
+          args: CreateRoomRouteArgs(
+            key: key,
+            remoteRenderer: remoteRenderer,
+          ),
           initialChildren: children,
         );
 
   static const String name = 'CreateRoomRoute';
 
-  static const PageInfo<void> page = PageInfo<void>(name);
+  static const PageInfo<CreateRoomRouteArgs> page =
+      PageInfo<CreateRoomRouteArgs>(name);
+}
+
+class CreateRoomRouteArgs {
+  const CreateRoomRouteArgs({
+    this.key,
+    required this.remoteRenderer,
+  });
+
+  final Key? key;
+
+  final RTCVideoRenderer remoteRenderer;
+
+  @override
+  String toString() {
+    return 'CreateRoomRouteArgs{key: $key, remoteRenderer: $remoteRenderer}';
+  }
 }
 
 /// generated route for

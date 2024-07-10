@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:webrtc_flutter/blocs/create_room_bloc/create_room_bloc.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
 import 'package:webrtc_flutter/router/router.dart';
@@ -9,7 +10,8 @@ import '../widgets/widgets.dart';
 
 @RoutePage()
 class CreateRoomScreen extends StatefulWidget {
-  const CreateRoomScreen({super.key});
+  const CreateRoomScreen({super.key, required this.remoteRenderer});
+  final RTCVideoRenderer remoteRenderer;
 
   @override
   State<CreateRoomScreen> createState() => _CreateRoomScreenState();
@@ -44,7 +46,10 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
     return BlocConsumer<CreateRoomBloc, CreateRoomState>(
       listener: (context, state) {
         if (state is CreateRoomInSuccess) {
-          AutoRouter.of(context).pushAndPopUntil(const HomeRouteMobile(),
+          AutoRouter.of(context).pushAndPopUntil(
+              RoomRoute(
+                  roomModel: state.roomModel,
+                  remoteRenderer: widget.remoteRenderer),
               predicate: (route) => false);
         }
       },

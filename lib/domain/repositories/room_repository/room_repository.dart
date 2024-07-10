@@ -34,10 +34,6 @@ class RoomRepository implements RoomRepositoryInterface {
       FirebaseFirestore.instance.collection('languages');
   @override
   Future<void> createRoom(RoomModel roomModel) async {
-    roomModel = roomModel.copyWith(
-      createTimeRoom: DateTime.now(),
-      id: const Uuid().v1(),
-    );
     DocumentReference roomRef = roomsCollection.doc(roomModel.id);
 
     try {

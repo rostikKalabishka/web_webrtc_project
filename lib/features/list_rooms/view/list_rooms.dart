@@ -45,7 +45,8 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
                       actions: [
                         IconButton(
                             onPressed: () {
-                              _navigateTo(const CreateRoomRoute());
+                              _navigateTo(CreateRoomRoute(
+                                  remoteRenderer: remoteRenderer));
                             },
                             icon: const Icon(Icons.add))
                       ],

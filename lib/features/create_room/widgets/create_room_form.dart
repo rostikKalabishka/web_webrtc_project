@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:webrtc_flutter/blocs/create_room_bloc/create_room_bloc.dart';
-
+import 'package:uuid/uuid.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
@@ -115,7 +115,7 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
         );
 
         final roomModel = RoomModel(
-          id: '',
+          id: const Uuid().v1(),
           roomName: roomName,
           roomLanguage: roomLanguage,
           roomUsersList: [],

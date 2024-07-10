@@ -43,7 +43,7 @@ class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
     emit(CreateRoomInProcess());
     try {
       await _roomRepository.createRoom(event.createRoomModel);
-      emit(CreateRoomInSuccess());
+      emit(CreateRoomInSuccess(roomModel: event.createRoomModel));
     } catch (e) {
       emit(CreateRoomFailure(error: e));
     }

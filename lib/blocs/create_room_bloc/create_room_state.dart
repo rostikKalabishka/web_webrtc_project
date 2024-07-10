@@ -31,4 +31,10 @@ final class CreateRoomFailure extends CreateRoomState {
 
 class CreateRoomInProcess extends CreateRoomState {}
 
-class CreateRoomInSuccess extends CreateRoomState {}
+class CreateRoomInSuccess extends CreateRoomState {
+  final RoomModel roomModel;
+
+  const CreateRoomInSuccess({required this.roomModel});
+  @override
+  List<Object> get props => super.props..add(roomModel);
+}

@@ -21,6 +21,7 @@ class RoomScreen extends StatefulWidget {
 
 class _RoomScreenState extends State<RoomScreen> {
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
+  RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
   bool isVideoOn = false;
   bool isAudioOn = false;
   bool isFrontCameraSelected = false;
@@ -34,20 +35,20 @@ class _RoomScreenState extends State<RoomScreen> {
 
   Future<void> _initializeRenderers() async {
     await _localRenderer.initialize();
-    await widget.remoteRenderer.initialize();
+    await _remoteRenderer.initialize();
   }
 
   @override
   void dispose() {
     _localRenderer.dispose();
-    widget.remoteRenderer.dispose();
+    _remoteRenderer.dispose();
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     roomRepository.onAddRemoteStream = ((stream) {
-      widget.remoteRenderer.srcObject = stream;
+      _remoteRenderer.srcObject = stream;
       setState(() {});
     });
     super.didChangeDependencies();
@@ -62,7 +63,7 @@ class _RoomScreenState extends State<RoomScreen> {
             Expanded(
               child: Stack(children: [
                 RTCVideoView(
-                  widget.remoteRenderer,
+                  _remoteRenderer,
                   objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
                 ),
                 Positioned(
@@ -129,7 +130,7 @@ class _RoomScreenState extends State<RoomScreen> {
   void _toggleMicrophone() {
     context.read<RoomBloc>().add(OpenMicrophone(
         localVideo: _localRenderer,
-        remoteVideo: widget.remoteRenderer,
+        remoteVideo: _remoteRenderer,
         openMic: isAudioOn,
         openCamera: isVideoOn,
         isFrontCameraSelected: isFrontCameraSelected));
@@ -138,7 +139,7 @@ class _RoomScreenState extends State<RoomScreen> {
   void _toggleCamera() {
     context.read<RoomBloc>().add(OpenCamera(
         localVideo: _localRenderer,
-        remoteVideo: widget.remoteRenderer,
+        remoteVideo: _remoteRenderer,
         openMic: isAudioOn,
         openCamera: isVideoOn,
         isFrontCameraSelected: isFrontCameraSelected));
@@ -147,7 +148,7 @@ class _RoomScreenState extends State<RoomScreen> {
   void _switchCamera() {
     context.read<RoomBloc>().add(SwitchCamera(
         localVideo: _localRenderer,
-        remoteVideo: widget.remoteRenderer,
+        remoteVideo: _remoteRenderer,
         openMic: isAudioOn,
         openCamera: isVideoOn,
         isFrontCameraSelected: isFrontCameraSelected));
