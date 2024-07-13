@@ -32,6 +32,40 @@ class RoomRepository implements RoomRepositoryInterface {
   final languagesCollection =
       FirebaseFirestore.instance.collection('languages');
 
+  void _initializeRemoteStream() async {
+    if (remoteStream == null) {
+      remoteStream = await createLocalMediaStream('remoteStream');
+    }
+  }
+
+  void _addTracksToRemoteStream(RTCTrackEvent event) {
+    event.streams[0].getTracks().forEach((track) {
+      log('Add a track to the remoteStream: ${track.id}');
+      remoteStream?.addTrack(track);
+    });
+  }
+
+  void registerPeerConnectionListeners() {
+    peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
+      log('ICE gathering state changed: $state');
+    };
+
+    peerConnection?.onConnectionState = (RTCPeerConnectionState state) {
+      log('Connection state change: $state');
+    };
+
+    peerConnection?.onSignalingState = (RTCSignalingState state) {
+      log('Signaling state change: $state');
+    };
+
+    peerConnection?.onTrack = (RTCTrackEvent event) async {
+      log('Got remote track: ${event.streams[0]}');
+      _initializeRemoteStream();
+      _addTracksToRemoteStream(event);
+      onAddRemoteStream?.call(remoteStream!);
+    };
+  }
+
   @override
   Future<void> createRoom(RoomModel roomModel) async {
     DocumentReference roomRef = roomsCollection.doc(roomModel.id);
@@ -46,17 +80,16 @@ class RoomRepository implements RoomRepositoryInterface {
       registerPeerConnectionListeners();
 
       localStream?.getTracks().forEach((track) {
+        log('Adding track to peer connection: ${track.id}');
         peerConnection?.addTrack(track, localStream!);
       });
 
-      // Code for collecting ICE candidates below
       var callerCandidatesCollection = roomRef.collection('callerCandidates');
       peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
         log('Got candidate: ${candidate.toMap()}');
         callerCandidatesCollection.add(candidate.toMap());
       };
 
-      // Add code for creating a room
       RTCSessionDescription offer = await peerConnection!.createOffer();
       await peerConnection!.setLocalDescription(offer);
 
@@ -64,14 +97,6 @@ class RoomRepository implements RoomRepositoryInterface {
         'offer': offer.toMap(),
       }..addAll(roomModel.toJson());
       await roomRef.set(roomWithOffer);
-
-      peerConnection?.onTrack = (RTCTrackEvent event) {
-        log('Got remote track: ${event.streams[0]}');
-        event.streams[0].getTracks().forEach((track) {
-          log('Add a track to the remoteStream $track');
-          remoteStream?.addTrack(track);
-        });
-      };
 
       roomRef.snapshots().listen((snapshot) async {
         log('Got updated room: ${snapshot.data()}');
@@ -91,7 +116,6 @@ class RoomRepository implements RoomRepositoryInterface {
         }
       });
 
-      // Listening for remote ICE candidates below
       roomRef.collection('calleeCandidates').snapshots().listen((snapshot) {
         snapshot.docChanges.forEach((change) {
           if (change.type == DocumentChangeType.added) {
@@ -142,10 +166,10 @@ class RoomRepository implements RoomRepositoryInterface {
         registerPeerConnectionListeners();
 
         localStream?.getTracks().forEach((track) {
+          log('Adding track to peer connection: ${track.id}');
           peerConnection?.addTrack(track, localStream!);
         });
 
-        // Code for collecting ICE candidates below
         var calleeCandidatesCollection = roomRef.collection('calleeCandidates');
         peerConnection!.onIceCandidate = (RTCIceCandidate? candidate) {
           if (candidate == null) {
@@ -154,14 +178,6 @@ class RoomRepository implements RoomRepositoryInterface {
           }
           log('onIceCandidate: ${candidate.toMap()}');
           calleeCandidatesCollection.add(candidate.toMap());
-        };
-
-        peerConnection?.onTrack = (RTCTrackEvent event) {
-          log('Got remote track: ${event.streams[0]}');
-          event.streams[0].getTracks().forEach((track) {
-            log('Add a track to the remoteStream: $track');
-            remoteStream?.addTrack(track);
-          });
         };
 
         var data = roomSnapshot.data() as Map<String, dynamic>;
@@ -181,9 +197,6 @@ class RoomRepository implements RoomRepositoryInterface {
 
         await roomRef.update(roomWithAnswer);
 
-        // Finished creating SDP answer
-
-        // Listening for remote ICE candidates below
         roomRef.collection('callerCandidates').snapshots().listen((snapshot) {
           snapshot.docChanges.forEach((document) {
             var data = document.doc.data() as Map<String, dynamic>;
@@ -249,37 +262,15 @@ class RoomRepository implements RoomRepositoryInterface {
       localStream = stream;
 
       stream.getTracks().forEach((track) {
+        log('Adding track to peer connection: ${track.id}');
         peerConnection?.addTrack(track, stream);
       });
 
-      remoteVideo.srcObject = await createLocalMediaStream('key');
+      _initializeRemoteStream();
+      remoteVideo.srcObject = remoteStream;
     } catch (e) {
       log('Error opening user media: $e');
       rethrow;
     }
-  }
-
-  void registerPeerConnectionListeners() {
-    peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
-      log('ICE gathering state changed: $state');
-    };
-
-    peerConnection?.onConnectionState = (RTCPeerConnectionState state) {
-      log('Connection state change: $state');
-    };
-
-    peerConnection?.onSignalingState = (RTCSignalingState state) {
-      log('Signaling state change: $state');
-    };
-
-    peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
-      log('ICE connection state change: $state');
-    };
-
-    peerConnection?.onAddStream = (MediaStream stream) {
-      log("Add remote stream");
-      onAddRemoteStream?.call(stream);
-      remoteStream = stream;
-    };
   }
 }
