@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:webrtc_flutter/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:webrtc_flutter/blocs/create_room_bloc/create_room_bloc.dart';
 import 'package:uuid/uuid.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
+import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 import 'package:webrtc_flutter/features/create_room/view/create_room.dart';
 
 import 'package:webrtc_flutter/ui/widgets/base_dropdown_menu.dart';
@@ -22,6 +25,7 @@ class CreateRoomWidget extends StatefulWidget {
     required this.width,
     required this.menuController,
     required this.menuItems,
+    required this.remoteRender,
   });
 
   final TextEditingController roomNameController;
@@ -34,6 +38,7 @@ class CreateRoomWidget extends StatefulWidget {
   final double width;
   final TextEditingController menuController;
   final List<MenuItem> menuItems;
+  final RTCVideoRenderer remoteRender;
 
   @override
   _CreateRoomWidgetState createState() => _CreateRoomWidgetState();
@@ -114,19 +119,23 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
           code: selectedMenu!.code,
         );
 
-        final roomModel = RoomModel(
-          id: const Uuid().v1(),
-          roomName: roomName,
-          roomLanguage: roomLanguage,
-          roomUsersList: [],
-          maxUserInRoom: userCount,
-          createTimeRoom: DateTime.now(),
-        );
+        final callerUser = context.read<AuthenticationBloc>().state.user;
+        if (callerUser != null) {
+          final roomModel = RoomModel(
+            id: const Uuid().v1(),
+            roomName: roomName,
+            roomLanguage: roomLanguage,
+            roomUsersList: [],
+            maxUserInRoom: userCount,
+            createTimeRoom: DateTime.now(),
+            callerUser: callerUser,
+            calleeUser: MyUserModel.empty,
+          );
 
-        context
-            .read<CreateRoomBloc>()
-            .add(CreateRoom(createRoomModel: roomModel));
-        print('Room model created successfully: ${roomModel.toJson()}');
+          context.read<CreateRoomBloc>().add(CreateRoom(
+              createRoomModel: roomModel, remoteRender: widget.remoteRender));
+          print('Room model created successfully: ${roomModel.toJson()}');
+        }
       } catch (e) {
         print('Error creating room model: $e');
       }

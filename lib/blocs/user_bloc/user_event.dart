@@ -8,12 +8,12 @@ sealed class UserEvent extends Equatable {
 }
 
 class GetCurrentUser extends UserEvent {
-  final String uid;
+  final MyUserModel currentUser;
 
-  const GetCurrentUser({required this.uid});
+  const GetCurrentUser({required this.currentUser});
 
   @override
-  List<Object> get props => super.props..add(uid);
+  List<Object> get props => super.props..add(currentUser);
 }
 
 class SingOut extends UserEvent {}

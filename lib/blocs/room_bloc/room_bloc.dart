@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
@@ -11,19 +12,32 @@ part 'room_state.dart';
 
 class RoomBloc extends Bloc<RoomEvent, RoomState> {
   final RoomRepository _roomRepository;
-
+  late final StreamSubscription _subscription;
   RoomBloc({required RoomRepository roomRepository})
       : _roomRepository = roomRepository,
         super(RoomInitial()) {
-    on<RoomEvent>((event, emit) async {
-      if (event is OpenMicrophone) {
-        await _openMicrophone(event, emit);
-      } else if (event is OpenCamera) {
-        await _openCamera(event, emit);
-      } else if (event is SwitchCamera) {
-        await _switchCamera(event, emit);
-      }
-    }, transformer: (events, mapper) => events.asyncExpand(mapper));
+    on<RoomEvent>(
+      (event, emit) async {
+        if (event is OpenMicrophone) {
+          await _openMicrophone(event, emit);
+        } else if (event is OpenCamera) {
+          await _openCamera(event, emit);
+        } else if (event is SwitchCamera) {
+          await _switchCamera(event, emit);
+        } else if (event is TakeStream) {
+          try {
+            _roomRepository.onAddRemoteStream = ((stream) {
+              print(stream.toString());
+              event.remoteRenderer.srcObject = stream;
+              emit(GetStream());
+            });
+          } catch (e) {
+            emit(RoomFailure(error: e));
+          }
+        }
+      },
+      // transformer: (events, mapper) => events.asyncExpand(mapper),
+    );
   }
   Future<void> _openCamera(OpenCamera event, emit) async {
     emit(OpenCameraInProcess());

@@ -9,26 +9,29 @@ class LoaderScreen extends StatelessWidget {
   const LoaderScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-      navigateTo(context, state);
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator.adaptive(),
-        ),
-      );
-    });
+    return BlocConsumer<AuthenticationBloc, AuthenticationState>(
+      listener: (context, state) {
+        navigateTo(context, state);
+      },
+      builder: (context, state) {
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator.adaptive(),
+          ),
+        );
+      },
+    );
   }
 
   void navigateTo(BuildContext context, AuthenticationState state) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final navigateToNextScreen =
-          state.status == AuthenticationStatus.authenticated
-              ? const HomeRouteMobile()
-              : const LoginRoute();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    final navigateToNextScreen =
+        state.status == AuthenticationStatus.authenticated
+            ? const HomeRouteMobile()
+            : const LoginRoute();
 
-      AutoRouter.of(context)
-          .pushAndPopUntil(navigateToNextScreen, predicate: (route) => false);
-    });
+    AutoRouter.of(context)
+        .pushAndPopUntil(navigateToNextScreen, predicate: (route) => false);
+    //  });
   }
 }

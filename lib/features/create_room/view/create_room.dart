@@ -76,6 +76,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     width: width,
                     menuController: menuController,
                     menuItems: menuItems,
+                    remoteRender: widget.remoteRenderer,
                   ),
                 ),
               ],

@@ -55,7 +55,8 @@ class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
         BlocProvider(
             create: (_) => userBloc
               ..add(GetCurrentUser(
-                  uid: context.read<AuthenticationBloc>().state.user!.uid))),
+                  currentUser:
+                      context.read<AuthenticationBloc>().state.user!))),
       ],
       child: widget.child,
     );

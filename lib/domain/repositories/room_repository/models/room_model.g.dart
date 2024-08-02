@@ -7,6 +7,10 @@ part of 'room_model.dart';
 // **************************************************************************
 
 RoomModel _$RoomModelFromJson(Map<String, dynamic> json) => RoomModel(
+      callerUser:
+          MyUserModel.fromJson(json['callerUser'] as Map<String, dynamic>),
+      calleeUser:
+          MyUserModel.fromJson(json['calleeUser'] as Map<String, dynamic>),
       id: json['id'] as String,
       roomName: json['roomName'] as String,
       roomLanguage:
@@ -25,4 +29,6 @@ Map<String, dynamic> _$RoomModelToJson(RoomModel instance) => <String, dynamic>{
       'roomUsersList': instance.roomUsersList,
       'maxUserInRoom': instance.maxUserInRoom,
       'createTimeRoom': instance.createTimeRoom.toIso8601String(),
+      'callerUser': instance.callerUser,
+      'calleeUser': instance.calleeUser,
     };

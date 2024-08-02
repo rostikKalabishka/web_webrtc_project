@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:webrtc_flutter/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:webrtc_flutter/blocs/room_list_bloc/room_list_bloc.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
@@ -71,9 +72,7 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
                         currentRoom = roomsList[index];
                         return GestureDetector(
                           onTap: () {
-                            context.read<RoomListBloc>().add(JoinRoomEvent(
-                                remoteVideo: remoteRenderer,
-                                roomModel: currentRoom));
+                            _joinRoom(context, currentRoom);
                           },
                           child: CustomRoomWidget(
                             room: roomsList[index],
@@ -106,6 +105,16 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
         }
       },
     );
+  }
+
+  void _joinRoom(BuildContext context, RoomModel currentRoom) {
+    final calleeUser = context.read<AuthenticationBloc>().state.user;
+    if (calleeUser != null) {
+      context.read<RoomListBloc>().add(JoinRoomEvent(
+          remoteVideo: remoteRenderer,
+          roomModel: currentRoom,
+          calleeUser: calleeUser));
+    }
   }
 
   void searchRooms(String text, BuildContext context) {

@@ -11,8 +11,9 @@ class GetLanguagesList extends CreateRoomEvent {}
 
 class CreateRoom extends CreateRoomEvent {
   final RoomModel createRoomModel;
+  final RTCVideoRenderer remoteRender;
 
-  const CreateRoom({required this.createRoomModel});
+  const CreateRoom({required this.createRoomModel, required this.remoteRender});
 
   @override
   List<Object> get props => super.props..add(createRoomModel);

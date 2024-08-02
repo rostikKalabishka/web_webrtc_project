@@ -26,7 +26,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _getCurrentUser(GetCurrentUser event, emit) async {
     emit(state.copyWith(myUserStatus: MyUserStatus.loading));
     try {
-      final MyUserModel myUser = await userRepository.getMyUser(event.uid);
+      final MyUserModel myUser =
+          await userRepository.getMyUser(event.currentUser.id);
 
       emit(state.copyWith(myUserStatus: MyUserStatus.success, myUser: myUser));
     } catch (e) {

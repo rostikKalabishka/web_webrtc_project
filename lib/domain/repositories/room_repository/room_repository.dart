@@ -7,6 +7,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository_interface.dart';
+import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 
 typedef void StreamStateCallback(MediaStream stream);
 
@@ -32,11 +33,9 @@ class RoomRepository implements RoomRepositoryInterface {
   final languagesCollection =
       FirebaseFirestore.instance.collection('languages');
 
-  void _initializeRemoteStream() async {
-    if (remoteStream == null) {
-      remoteStream = await createLocalMediaStream('remoteStream');
-    }
-  }
+  // void _initializeRemoteStream() async {
+  //   remoteStream ??= await createLocalMediaStream('key');
+  // }
 
   void _addTracksToRemoteStream(RTCTrackEvent event) {
     event.streams[0].getTracks().forEach((track) {
@@ -60,14 +59,21 @@ class RoomRepository implements RoomRepositoryInterface {
 
     peerConnection?.onTrack = (RTCTrackEvent event) async {
       log('Got remote track: ${event.streams[0]}');
-      _initializeRemoteStream();
+      // _initializeRemoteStream();
       _addTracksToRemoteStream(event);
       onAddRemoteStream?.call(remoteStream!);
+    };
+
+    peerConnection?.onAddStream = (MediaStream stream) {
+      print('Add remote stream');
+      onAddRemoteStream?.call(remoteStream!);
+      remoteStream = stream;
     };
   }
 
   @override
-  Future<void> createRoom(RoomModel roomModel) async {
+  Future<void> createRoom(
+      RoomModel roomModel, RTCVideoRenderer remoteRender) async {
     DocumentReference roomRef = roomsCollection.doc(roomModel.id);
 
     try {
@@ -150,8 +156,8 @@ class RoomRepository implements RoomRepositoryInterface {
   }
 
   @override
-  Future<void> joinRoom(
-      RoomModel roomModel, RTCVideoRenderer remoteVideo) async {
+  Future<void> joinRoom(RoomModel roomModel, RTCVideoRenderer remoteVideo,
+      MyUserModel calleeUser) async {
     DocumentReference roomRef = roomsCollection.doc(roomModel.id);
     var roomSnapshot = await roomRef.get();
     log('Got room ${roomSnapshot.exists}');
@@ -192,7 +198,8 @@ class RoomRepository implements RoomRepositoryInterface {
         await peerConnection!.setLocalDescription(answer);
 
         Map<String, dynamic> roomWithAnswer = {
-          'answer': {'type': answer.type, 'sdp': answer.sdp}
+          'answer': {'type': answer.type, 'sdp': answer.sdp},
+          'calleeUser': calleeUser.toJson()
         };
 
         await roomRef.update(roomWithAnswer);
@@ -266,8 +273,7 @@ class RoomRepository implements RoomRepositoryInterface {
         peerConnection?.addTrack(track, stream);
       });
 
-      _initializeRemoteStream();
-      remoteVideo.srcObject = remoteStream;
+      remoteVideo.srcObject = await createLocalMediaStream('key');
     } catch (e) {
       log('Error opening user media: $e');
       rethrow;

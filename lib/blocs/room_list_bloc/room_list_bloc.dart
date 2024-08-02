@@ -6,6 +6,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
+import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 
 part 'room_list_event.dart';
 part 'room_list_state.dart';
@@ -61,7 +62,8 @@ class RoomListBloc extends Bloc<RoomListEvent, RoomListState> {
   Future<void> _joinRoom(JoinRoomEvent event, emit) async {
     emit(JoinRoomInProcess());
     try {
-      await _roomRepository.joinRoom(event.roomModel, event.remoteVideo);
+      await _roomRepository.joinRoom(
+          event.roomModel, event.remoteVideo, event.calleeUser);
       emit(JoinRoomInSuccess());
     } catch (e) {
       emit(RoomListFailure(error: e));

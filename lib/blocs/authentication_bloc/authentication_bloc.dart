@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 
 import '../../domain/repositories/user_repository/user_repository.dart';
 
@@ -13,7 +14,7 @@ part 'authentication_state.dart';
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UserRepository userRepository;
-  late final StreamSubscription<User?> _userSubscription;
+  late final StreamSubscription<MyUserModel?> _userSubscription;
 
   AuthenticationBloc({required UserRepository myUserRepository})
       : userRepository = myUserRepository,

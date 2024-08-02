@@ -6,11 +6,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'user_repository_interface.dart';
 
 class UserRepository implements UserRepositoryInterface {
-  FirebaseAuth _firebaseAuth;
+  final FirebaseAuth _firebaseAuth;
   UserRepository({FirebaseAuth? firebaseAuth})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
@@ -116,8 +117,16 @@ class UserRepository implements UserRepositoryInterface {
   }
 
   @override
-  Stream<User?> get user =>
-      _firebaseAuth.authStateChanges().map((firebaseUser) {
-        return firebaseUser;
-      });
+  Stream<MyUserModel?> get user {
+    return _firebaseAuth.authStateChanges().flatMap((firebaseUser) async* {
+      if (firebaseUser == null) {
+        yield MyUserModel.empty;
+      } else {
+        yield await usersCollection
+            .doc(firebaseUser.uid)
+            .get()
+            .then((value) => MyUserModel.fromJson(value.data()!));
+      }
+    });
+  }
 }

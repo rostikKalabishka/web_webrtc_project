@@ -92,7 +92,7 @@ class _ShowUpdateUserInfoBottomSheetState
       final username = widget.usernameController.text;
       bloc.add(UpdateUserInfo(
         username: username.isNotEmpty ? username : bloc.state.myUser.username,
-        userId: context.read<AuthenticationBloc>().state.user!.uid,
+        userId: context.read<AuthenticationBloc>().state.user!.id,
         file: _pickedFile?.path ?? '',
       ));
       widget.usernameController.clear();

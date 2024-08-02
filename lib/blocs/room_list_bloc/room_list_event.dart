@@ -21,9 +21,15 @@ class SearchRooms extends RoomListEvent {
 class JoinRoomEvent extends RoomListEvent {
   final RoomModel roomModel;
   final RTCVideoRenderer remoteVideo;
+  final MyUserModel calleeUser;
 
-  const JoinRoomEvent({required this.roomModel, required this.remoteVideo});
+  const JoinRoomEvent({
+    required this.roomModel,
+    required this.remoteVideo,
+    required this.calleeUser,
+  });
 
   @override
-  List<Object> get props => super.props..addAll([roomModel, remoteVideo]);
+  List<Object> get props =>
+      super.props..addAll([roomModel, remoteVideo, calleeUser]);
 }

@@ -16,16 +16,21 @@ class RoomModel extends Equatable {
   final List<MyUserModel> roomUsersList;
   final int maxUserInRoom;
   final DateTime createTimeRoom;
+  final MyUserModel callerUser;
+  final MyUserModel calleeUser;
 
   const RoomModel(
-      {required this.id,
+      {required this.callerUser,
+      required this.calleeUser,
+      required this.id,
       required this.roomName,
       required this.roomLanguage,
       required this.roomUsersList,
       required this.maxUserInRoom,
       required this.createTimeRoom});
   @override
-  List<Object?> get props => [id, roomLanguage, roomName, roomUsersList];
+  List<Object?> get props =>
+      [id, roomLanguage, roomName, roomUsersList, callerUser, calleeUser];
 
   // static const empty = RoomModel(
   //   id: '',
@@ -43,6 +48,8 @@ class RoomModel extends Equatable {
     List<MyUserModel>? roomUsersList,
     int? maxUserInRoom,
     DateTime? createTimeRoom,
+    MyUserModel? callerUser,
+    MyUserModel? calleeUser,
   }) {
     return RoomModel(
       id: id ?? this.id,
@@ -51,6 +58,8 @@ class RoomModel extends Equatable {
       roomUsersList: roomUsersList ?? this.roomUsersList,
       maxUserInRoom: maxUserInRoom ?? this.maxUserInRoom,
       createTimeRoom: createTimeRoom ?? this.createTimeRoom,
+      callerUser: callerUser ?? this.callerUser,
+      calleeUser: calleeUser ?? this.calleeUser,
     );
   }
 
@@ -61,6 +70,8 @@ class RoomModel extends Equatable {
         'roomUsersList': roomUsersList,
         'maxUserInRoom': maxUserInRoom,
         'createTimeRoom': createTimeRoom.toIso8601String(),
+        'callerUser': callerUser.toJson(),
+        'calleeUser': calleeUser.toJson()
       };
 
   factory RoomModel.fromJson(Map<String, dynamic> json) =>

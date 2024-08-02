@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
@@ -42,7 +43,8 @@ class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
   Future<void> _createRoom(CreateRoom event, emit) async {
     emit(CreateRoomInProcess());
     try {
-      await _roomRepository.createRoom(event.createRoomModel);
+      await _roomRepository.createRoom(
+          event.createRoomModel, event.remoteRender);
       emit(CreateRoomInSuccess(roomModel: event.createRoomModel));
     } catch (e) {
       emit(CreateRoomFailure(error: e));

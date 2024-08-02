@@ -47,6 +47,15 @@ class SwitchCamera extends RoomEvent {
         [localVideo, remoteVideo, openMic, openCamera, isFrontCameraSelected]);
 }
 
+class TakeStream extends RoomEvent {
+  final RTCVideoRenderer remoteRenderer;
+
+  const TakeStream({required this.remoteRenderer});
+
+  @override
+  List<Object> get props => super.props..addAll([remoteRenderer]);
+}
+
 class OpenCamera extends RoomEvent {
   final RTCVideoRenderer localVideo;
   final RTCVideoRenderer remoteVideo;
