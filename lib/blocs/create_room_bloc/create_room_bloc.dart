@@ -43,9 +43,9 @@ class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
   Future<void> _createRoom(CreateRoom event, emit) async {
     emit(CreateRoomInProcess());
     try {
-      await _roomRepository.createRoom(
-          event.createRoomModel, event.remoteRender);
-      emit(CreateRoomInSuccess(roomModel: event.createRoomModel));
+      // await _roomRepository.createRoom(
+      //     event.createRoomModel, event.remoteRender);
+      // emit(CreateRoomInSuccess(roomModel: event.createRoomModel));
     } catch (e) {
       emit(CreateRoomFailure(error: e));
     }

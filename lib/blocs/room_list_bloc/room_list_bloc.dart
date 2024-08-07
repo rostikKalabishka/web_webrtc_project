@@ -62,8 +62,8 @@ class RoomListBloc extends Bloc<RoomListEvent, RoomListState> {
   Future<void> _joinRoom(JoinRoomEvent event, emit) async {
     emit(JoinRoomInProcess());
     try {
-      await _roomRepository.joinRoom(
-          event.roomModel, event.remoteVideo, event.calleeUser);
+      // await _roomRepository.joinRoom(
+      //     event.roomModel, event.remoteVideo, event.calleeUser);
       emit(JoinRoomInSuccess());
     } catch (e) {
       emit(RoomListFailure(error: e));

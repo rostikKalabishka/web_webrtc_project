@@ -29,7 +29,8 @@ class CustomRoomWidget extends StatelessWidget {
               children: [
                 Row(children: [
                   Text(
-                    room.roomLanguage.name,
+                    // room.roomLanguage.name,
+                    'biba',
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(

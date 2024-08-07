@@ -4,6 +4,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:webrtc_flutter/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:webrtc_flutter/blocs/create_room_bloc/create_room_bloc.dart';
 import 'package:uuid/uuid.dart';
+import 'package:webrtc_flutter/blocs/room_bloc/cubit/room_cubit.dart';
 import 'package:webrtc_flutter/common/utils/utils.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
@@ -124,7 +125,7 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
           final roomModel = RoomModel(
             id: const Uuid().v1(),
             roomName: roomName,
-            roomLanguage: roomLanguage,
+            // roomLanguage: roomLanguage,
             roomUsersList: [],
             maxUserInRoom: userCount,
             createTimeRoom: DateTime.now(),
@@ -132,8 +133,12 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
             calleeUser: MyUserModel.empty,
           );
 
-          context.read<CreateRoomBloc>().add(CreateRoom(
-              createRoomModel: roomModel, remoteRender: widget.remoteRender));
+          // context.read<CreateRoomBloc>().add(CreateRoom(
+          //     createRoomModel: roomModel, remoteRender: widget.remoteRender));
+
+          context.read<RoomBloc>().createRoom(
+                room: roomModel,
+              );
           print('Room model created successfully: ${roomModel.toJson()}');
         }
       } catch (e) {

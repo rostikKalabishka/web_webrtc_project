@@ -12,7 +12,7 @@ final DateTime now = DateTime.now();
 class RoomModel extends Equatable {
   final String id;
   final String roomName;
-  final LanguagesModel roomLanguage;
+  //final LanguagesModel roomLanguage;
   final List<MyUserModel> roomUsersList;
   final int maxUserInRoom;
   final DateTime createTimeRoom;
@@ -24,13 +24,16 @@ class RoomModel extends Equatable {
       required this.calleeUser,
       required this.id,
       required this.roomName,
-      required this.roomLanguage,
+      //required this.roomLanguage,
       required this.roomUsersList,
       required this.maxUserInRoom,
       required this.createTimeRoom});
   @override
-  List<Object?> get props =>
-      [id, roomLanguage, roomName, roomUsersList, callerUser, calleeUser];
+  List<Object?> get props => [
+        id,
+        // roomLanguage,
+        roomName, roomUsersList, callerUser, calleeUser
+      ];
 
   // static const empty = RoomModel(
   //   id: '',
@@ -44,7 +47,7 @@ class RoomModel extends Equatable {
   RoomModel copyWith({
     String? id,
     String? roomName,
-    LanguagesModel? roomLanguage,
+    // LanguagesModel? roomLanguage,
     List<MyUserModel>? roomUsersList,
     int? maxUserInRoom,
     DateTime? createTimeRoom,
@@ -54,7 +57,7 @@ class RoomModel extends Equatable {
     return RoomModel(
       id: id ?? this.id,
       roomName: roomName ?? this.roomName,
-      roomLanguage: roomLanguage ?? this.roomLanguage,
+      //  roomLanguage: roomLanguage ?? this.roomLanguage,
       roomUsersList: roomUsersList ?? this.roomUsersList,
       maxUserInRoom: maxUserInRoom ?? this.maxUserInRoom,
       createTimeRoom: createTimeRoom ?? this.createTimeRoom,
@@ -66,7 +69,7 @@ class RoomModel extends Equatable {
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'roomName': roomName,
-        'roomLanguage': roomLanguage.toJson(),
+        // 'roomLanguage': roomLanguage.toJson(),
         'roomUsersList': roomUsersList,
         'maxUserInRoom': maxUserInRoom,
         'createTimeRoom': createTimeRoom.toIso8601String(),
