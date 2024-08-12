@@ -45,7 +45,7 @@ class _FactoryBlocProviderState extends State<FactoryBlocProvider> {
     final CreateRoomBloc createRoomBloc =
         CreateRoomBloc(roomRepository: roomRepository);
     final RoomListBloc roomListBloc =
-        RoomListBloc(roomRepository: roomRepository);
+        RoomListBloc(roomRepository: roomRepository, roomBloc: roomBloc);
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => singInBloc),

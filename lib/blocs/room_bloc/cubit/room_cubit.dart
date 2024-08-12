@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:uuid/uuid.dart';
+
 import 'package:webrtc_flutter/blocs/room_bloc/cubit/room_state.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
-import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 
 class RoomBloc extends Cubit<RoomState> {
   final RoomRepository _roomRepository;
@@ -27,7 +26,7 @@ class RoomBloc extends Cubit<RoomState> {
 
   RoomBloc({required RoomRepository roomRepository})
       : _roomRepository = roomRepository,
-        super(const RoomState()) {}
+        super(const RoomState());
 
   Future<void> createRoom({
     required RoomModel room,
@@ -71,6 +70,130 @@ class RoomBloc extends Cubit<RoomState> {
           },
         ),
       ]);
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> joinRoom({
+    required RoomModel room,
+  }) async {
+    try {
+      final sessionDescription =
+          await _roomRepository.getRoomOfferIfExists(roomId: room.id);
+
+      if (sessionDescription != null) {
+        _registerPeerConnectionListeners(room);
+
+        state.localStream?.getTracks().forEach((track) {
+          state.peerConnection!.addTrack(track, state.localStream!);
+        });
+
+        state.peerConnection!.setRemoteDescription(sessionDescription);
+        final answer = await state.peerConnection!.createAnswer();
+
+        await state.peerConnection!.setLocalDescription(answer);
+        await _roomRepository.setAnswer(roomId: room.id, answer: answer);
+        _subscriptions.addAll([
+          _roomRepository
+              .getCandidatesAddedToRoomStream(
+                  roomId: room.id, listenCaller: true)
+              .listen((candidates) {
+            for (final candidate in candidates) {
+              state.peerConnection?.addCandidate(candidate);
+            }
+          }),
+          _roomRepository
+              .getRoomDataStream(roomId: room.id)
+              .listen((answer) async {
+            if (answer == null) {
+              emit(state.copyWith(clearAll: true));
+            }
+          })
+        ]);
+      }
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  void enableVideo() {
+    try {
+      if (state.videoDisabled) {
+        state.localStream
+            ?.getVideoTracks()
+            .forEach((track) => track.enabled = true);
+        emit(state.copyWith(videoDisabled: false));
+      }
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  void disableVideo() {
+    try {
+      if (!state.videoDisabled) {
+        state.localStream
+            ?.getVideoTracks()
+            .forEach((track) => track.enabled = false);
+        emit(state.copyWith(videoDisabled: true));
+      }
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  void enableAudio() {
+    try {
+      if (state.audioDisabled) {
+        state.localStream
+            ?.getAudioTracks()
+            .forEach((track) => track.enabled = true);
+        emit(state.copyWith(audioDisabled: false));
+      }
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  void disableAudio() {
+    try {
+      if (!state.audioDisabled) {
+        state.localStream
+            ?.getAudioTracks()
+            .forEach((track) => track.enabled = false);
+        emit(state.copyWith(audioDisabled: true));
+      }
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> hangUp(RTCVideoRenderer localVideo) async {
+    try {
+      final tracks = localVideo.srcObject!.getTracks();
+      for (var track in tracks) {
+        track.stop();
+      }
+
+      if (state.remoteStream != null) {
+        state.remoteStream!.getTracks().forEach((track) => track.stop());
+      }
+      if (state.peerConnection != null) state.peerConnection!.close();
+
+      if (state.roomModel != null) {
+        _roomRepository.deleteRoom(roomId: state.roomModel!.id);
+      }
+
+      state.localStream!.dispose();
+      state.remoteStream?.dispose();
+
+      for (final subs in _subscriptions) {
+        subs.cancel();
+      }
+      _subscriptions.clear();
+
+      emit(state.copyWith(clearAll: true));
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }

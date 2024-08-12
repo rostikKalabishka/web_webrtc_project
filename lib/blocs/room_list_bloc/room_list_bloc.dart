@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:webrtc_flutter/blocs/room_bloc/cubit/room_cubit.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
@@ -13,9 +14,12 @@ part 'room_list_state.dart';
 
 class RoomListBloc extends Bloc<RoomListEvent, RoomListState> {
   final RoomRepository _roomRepository;
+  final RoomBloc roomBloc;
   Timer? searchDebounce;
-  RoomListBloc({required RoomRepository roomRepository})
-      : _roomRepository = roomRepository,
+  RoomListBloc({
+    required RoomRepository roomRepository,
+    required this.roomBloc,
+  })  : _roomRepository = roomRepository,
         super(RoomListInitial()) {
     on<RoomListEvent>((event, emit) async {
       if (event is RoomListLoadEvent) {
@@ -62,8 +66,7 @@ class RoomListBloc extends Bloc<RoomListEvent, RoomListState> {
   Future<void> _joinRoom(JoinRoomEvent event, emit) async {
     emit(JoinRoomInProcess());
     try {
-      // await _roomRepository.joinRoom(
-      //     event.roomModel, event.remoteVideo, event.calleeUser);
+      await roomBloc.joinRoom(room: event.roomModel);
       emit(JoinRoomInSuccess());
     } catch (e) {
       emit(RoomListFailure(error: e));
