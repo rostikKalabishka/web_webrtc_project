@@ -7,11 +7,14 @@ import 'package:webrtc_flutter/blocs/room_bloc/cubit/room_state.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/models.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
+import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 
 class RoomBloc extends Cubit<RoomState> {
   final RoomRepository _roomRepository;
 
   final List<StreamSubscription> _subscriptions = [];
+
+  MyUserModel? myUserModel;
 
   static const Map<String, dynamic> _configuration = {
     'iceServers': [
@@ -61,7 +64,9 @@ class RoomBloc extends Cubit<RoomState> {
         }),
         _roomRepository
             .getCandidatesAddedToRoomStream(
-                roomId: roomModel.id, listenCaller: false)
+                roomId: roomModel.id,
+                listenCaller: false,
+                userId: myUserModel!.id)
             .listen(
           (candidates) {
             for (final candidate in candidates) {
@@ -97,7 +102,7 @@ class RoomBloc extends Cubit<RoomState> {
         _subscriptions.addAll([
           _roomRepository
               .getCandidatesAddedToRoomStream(
-                  roomId: room.id, listenCaller: true)
+                  roomId: room.id, listenCaller: true, userId: myUserModel!.id)
               .listen((candidates) {
             for (final candidate in candidates) {
               state.peerConnection?.addCandidate(candidate);
@@ -213,7 +218,9 @@ class RoomBloc extends Cubit<RoomState> {
     try {
       state.peerConnection!.onIceCandidate = (candidate) {
         _roomRepository.addCandidateToRoom(
-            roomId: roomModel.id, candidate: candidate);
+            roomId: roomModel.id,
+            candidate: candidate,
+            userId: myUserModel!.id);
       };
 
       state.peerConnection!.onAddStream = (stream) {

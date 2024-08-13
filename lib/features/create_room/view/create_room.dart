@@ -130,12 +130,12 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width * 0.82;
     final TextEditingController menuController = TextEditingController();
-    return BlocConsumer<RoomBloc, RoomState>(
+    return BlocConsumer<CreateRoomBloc, CreateRoomState>(
       listener: (context, state) {
-        if (state.roomModel != null) {
+        if (state is CreateRoomInSuccess) {
           AutoRouter.of(context).pushAndPopUntil(
               RoomRoute(
-                  roomModel: state.roomModel!,
+                  roomModel: state.roomModel,
                   remoteRenderer: widget.remoteRenderer),
               predicate: (route) => false);
         }

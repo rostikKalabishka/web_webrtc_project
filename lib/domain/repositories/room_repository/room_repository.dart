@@ -301,8 +301,6 @@ class RoomRepository {
   final languagesCollection =
       FirebaseFirestore.instance.collection('languages');
 
-  String? userId;
-
   Future<RoomModel> createRoom(
       {required RTCSessionDescription offer,
       required RoomModel roomModel}) async {
@@ -365,6 +363,7 @@ class RoomRepository {
   Stream<List<RTCIceCandidate>> getCandidatesAddedToRoomStream({
     required String roomId,
     required bool listenCaller,
+    required String userId,
   }) {
     final snapshots = roomsCollection
         .doc(roomId)
@@ -395,11 +394,17 @@ class RoomRepository {
   Future<void> addCandidateToRoom({
     required String roomId,
     required RTCIceCandidate candidate,
+    required String userId,
   }) async {
-    final roomRef = roomsCollection.doc(roomId);
-    final candidatesCollection = roomRef.collection(_candidatesCollection);
-    await candidatesCollection
-        .add(candidate.toMap()..[_candidateUidField] = userId);
+    try {
+      final roomRef = roomsCollection.doc(roomId);
+      final candidatesCollection = roomRef.collection(_candidatesCollection);
+      await candidatesCollection
+          .add(candidate.toMap()..[_candidateUidField] = userId);
+    } catch (e) {
+      log(e.toString());
+      rethrow;
+    }
   }
 
   Future<List<RoomModel>> searchRooms(String query) async {

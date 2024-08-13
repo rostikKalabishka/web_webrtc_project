@@ -27,7 +27,7 @@ class _RoomScreenState extends State<RoomScreen> {
   bool isVideoOn = false;
   bool isAudioOn = false;
   bool isFrontCameraSelected = false;
-  final RoomRepository roomRepository = RoomRepository();
+  // final RoomRepository roomRepository = RoomRepository();
 
   @override
   void initState() {

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:webrtc_flutter/blocs/room_bloc/cubit/room_cubit.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/room_repository.dart';
@@ -12,8 +13,11 @@ part 'create_room_state.dart';
 
 class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
   final RoomRepository _roomRepository;
-  CreateRoomBloc({required RoomRepository roomRepository})
-      : _roomRepository = roomRepository,
+  final RoomBloc roomBloc;
+  CreateRoomBloc(
+    this.roomBloc, {
+    required RoomRepository roomRepository,
+  })  : _roomRepository = roomRepository,
         super(CreateRoomInitial()) {
     on<CreateRoomEvent>((event, emit) async {
       if (event is GetLanguagesList) {
@@ -43,9 +47,10 @@ class CreateRoomBloc extends Bloc<CreateRoomEvent, CreateRoomState> {
   Future<void> _createRoom(CreateRoom event, emit) async {
     emit(CreateRoomInProcess());
     try {
+      await roomBloc.createRoom(room: event.createRoomModel);
       // await _roomRepository.createRoom(
       //     event.createRoomModel, event.remoteRender);
-      // emit(CreateRoomInSuccess(roomModel: event.createRoomModel));
+      emit(CreateRoomInSuccess(roomModel: event.createRoomModel));
     } catch (e) {
       emit(CreateRoomFailure(error: e));
     }

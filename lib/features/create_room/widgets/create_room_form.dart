@@ -133,12 +133,9 @@ class _CreateRoomWidgetState extends State<CreateRoomWidget> {
             calleeUser: MyUserModel.empty,
           );
 
-          // context.read<CreateRoomBloc>().add(CreateRoom(
-          //     createRoomModel: roomModel, remoteRender: widget.remoteRender));
+          context.read<CreateRoomBloc>().add(CreateRoom(
+              createRoomModel: roomModel, remoteRender: widget.remoteRender));
 
-          context.read<RoomBloc>().createRoom(
-                room: roomModel,
-              );
           print('Room model created successfully: ${roomModel.toJson()}');
         }
       } catch (e) {

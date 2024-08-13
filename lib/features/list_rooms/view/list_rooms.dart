@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:webrtc_flutter/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:webrtc_flutter/blocs/room_bloc/cubit/room_cubit.dart';
 import 'package:webrtc_flutter/blocs/room_list_bloc/room_list_bloc.dart';
 
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
@@ -26,6 +27,11 @@ class _ListRoomsScreenState extends State<ListRoomsScreen> {
     searchController = TextEditingController();
     super.initState();
     context.read<RoomListBloc>().add(RoomListLoadEvent());
+
+    final user = context.read<AuthenticationBloc>().state.user;
+    if (user != null) {
+      context.read<RoomBloc>().myUserModel = user;
+    }
   }
 
   @override
