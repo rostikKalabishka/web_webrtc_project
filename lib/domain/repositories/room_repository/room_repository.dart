@@ -285,10 +285,9 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:uuid/uuid.dart';
+
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/languages_model.dart';
 import 'package:webrtc_flutter/domain/repositories/room_repository/models/room_model.dart';
-import 'package:webrtc_flutter/domain/repositories/user_repository/models/my_user_model.dart';
 
 class RoomRepository {
   static const String _roomsCollection = 'rooms';

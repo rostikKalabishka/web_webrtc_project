@@ -36,11 +36,14 @@ class RoomBloc extends Cubit<RoomState> {
       await _createPeerConnection();
 
       final offer = await state.peerConnection!.createOffer();
+      await state.peerConnection!.setLocalDescription(offer);
+
       final roomModel =
           await _roomRepository.createRoom(offer: offer, roomModel: room);
 
       if (state.peerConnection != null) {
         print("Registering peer connection listeners");
+        await enableUserMediaStream(video: true, audio: true);
         _registerPeerConnectionListeners(roomModel);
       } else {
         print("PeerConnection is null after creation");
@@ -49,11 +52,11 @@ class RoomBloc extends Cubit<RoomState> {
       state.localStream?.getTracks().forEach((track) {
         state.peerConnection!.addTrack(track, state.localStream!);
       });
+
       emit(state.copyWith(
         roomModel: roomModel,
       ));
 
-      await state.peerConnection!.setLocalDescription(offer);
       _subscriptions.addAll([
         _roomRepository
             .getRoomDataStream(roomId: roomModel.id)
@@ -61,9 +64,9 @@ class RoomBloc extends Cubit<RoomState> {
           if (answer != null) {
             await state.peerConnection?.setRemoteDescription(answer);
           } else {
-            if (state.remoteStream != null) {
-              emit(state.copyWith(clearAll: true));
-            }
+            // if (state.remoteStream != null) {
+            //   emit(state.copyWith(clearAll: true));
+            // }
           }
         }),
         _roomRepository
@@ -86,10 +89,13 @@ class RoomBloc extends Cubit<RoomState> {
     required RoomModel room,
   }) async {
     try {
+      await _createPeerConnection();
+
       final sessionDescription =
           await _roomRepository.getRoomOfferIfExists(roomId: room.id);
 
       if (sessionDescription != null) {
+        await enableUserMediaStream(video: true, audio: true);
         _registerPeerConnectionListeners(room);
 
         state.localStream?.getTracks().forEach((track) {
@@ -114,7 +120,7 @@ class RoomBloc extends Cubit<RoomState> {
               .getRoomDataStream(roomId: room.id)
               .listen((answer) async {
             if (answer == null) {
-              emit(state.copyWith(clearAll: true));
+              // emit(state.copyWith(clearAll: true));
             }
           })
         ]);
@@ -124,14 +130,17 @@ class RoomBloc extends Cubit<RoomState> {
     }
   }
 
-  Future<void> enableUserMediaStream() async {
+  Future<void> enableUserMediaStream({
+    required bool video,
+    required bool audio,
+  }) async {
     try {
       var stream = await navigator.mediaDevices
-          .getUserMedia({'video': true, 'audio': true});
+          .getUserMedia({'video': video, 'audio': audio});
       emit(
-        state.copyWith(
-            localStream: stream, currentUserShown: true, clearAll: true),
+        state.copyWith(localStream: stream, currentUserShown: true),
       );
+      print(state.localStream!.id);
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }
@@ -213,7 +222,7 @@ class RoomBloc extends Cubit<RoomState> {
       }
       _subscriptions.clear();
 
-      emit(state.copyWith(clearAll: true));
+      emit(state);
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }
@@ -224,6 +233,7 @@ class RoomBloc extends Cubit<RoomState> {
       final peerConnection = await createPeerConnection(_configuration);
       print("PeerConnection created successfully");
       emit(state.copyWith(peerConnection: peerConnection));
+      print(state.peerConnection);
     } catch (e) {
       print("Error creating PeerConnection: $e");
       emit(state.copyWith(error: e.toString()));
@@ -257,13 +267,16 @@ class RoomBloc extends Cubit<RoomState> {
         print("onAddStream triggered with stream: ${stream.id}");
         emit(state.copyWith(remoteStream: stream, companionShown: true));
       };
-
+      print(state.remoteStream);
       peerConnection.onTrack = (event) {
         print("onTrack triggered with event: ${event}");
         if (event.streams.isNotEmpty) {
-          final stream = event.streams.first;
-          print("onTrack triggered with stream: ${stream.id}");
-          emit(state.copyWith(remoteStream: stream, companionShown: true));
+          event.streams[0]
+              .getTracks()
+              .forEach((track) => state.remoteStream?.addTrack(track));
+          // final stream = event.streams.first;
+          // print("onTrack triggered with stream: ${stream.id}");
+          // emit(state.copyWith(remoteStream: stream, companionShown: true));
         } else {
           print("No streams found in onTrack event");
         }
