@@ -26,8 +26,19 @@ class _RoomScreenState extends State<RoomScreen> {
 
   @override
   void initState() {
-    _localRenderer.initialize();
-    _remoteRenderer.initialize();
+    _localRenderer.initialize().then((_) {
+      final roomState = context.read<RoomBloc>().state;
+      if (roomState.localStream != null) {
+        _localRenderer.srcObject = roomState.localStream!;
+      }
+    });
+
+    _remoteRenderer.initialize().then((_) {
+      final roomState = context.read<RoomBloc>().state;
+      if (roomState.remoteStream != null) {
+        _remoteRenderer.srcObject = roomState.remoteStream!;
+      }
+    });
     super.initState();
   }
 
