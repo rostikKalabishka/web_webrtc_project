@@ -104,17 +104,11 @@ class _RoomScreenState extends State<RoomScreen> {
           ),
         ),
         Positioned(
-          bottom: _defaultPadding,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ..._mediaButtons(
-                  cameraEnabled: cameraEnabled, microEnabled: microEnabled),
-            ],
-          ),
-        ),
+            bottom: _defaultPadding,
+            left: 0,
+            right: 0,
+            child: _buttonsWidget(
+                cameraEnabled: cameraEnabled, microEnabled: microEnabled)),
       ],
     );
   }
@@ -158,53 +152,54 @@ class _RoomScreenState extends State<RoomScreen> {
           ),
         ),
         Positioned(
-          bottom: _defaultPadding,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ..._mediaButtons(
-                  cameraEnabled: cameraEnabled, microEnabled: microEnabled),
-            ],
-          ),
-        ),
+            bottom: _defaultPadding,
+            left: 0,
+            right: 0,
+            child: _buttonsWidget(
+                cameraEnabled: cameraEnabled, microEnabled: microEnabled)),
       ],
     );
   }
 
-  List<Widget> _mediaButtons(
+  Widget _buttonsWidget(
       {required bool microEnabled, required bool cameraEnabled}) {
     final _cubit = context.read<RoomBloc>();
-    return [
-      FloatingActionButton(
-        onPressed: () {
-          if (cameraEnabled) {
-            _cubit.disableVideo();
-          } else {
-            _cubit.enableVideo();
-          }
-        },
-        backgroundColor: cameraEnabled ? Colors.blueAccent : Colors.white,
-        child: Icon(
-          cameraEnabled ? Icons.videocam : Icons.videocam_off,
-          color: cameraEnabled ? Colors.white : Colors.red,
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          IconButton(
+            icon: Icon(microEnabled ? Icons.mic : Icons.mic_off),
+            onPressed: () {
+              if (microEnabled) {
+                _cubit.disableAudio();
+              } else {
+                _cubit.enableAudio();
+              }
+            },
+          ),
+          IconButton(
+            icon: Icon(cameraEnabled ? Icons.videocam : Icons.videocam_off),
+            onPressed: () {
+              if (cameraEnabled) {
+                _cubit.disableVideo();
+              } else {
+                _cubit.enableVideo();
+              }
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.cameraswitch),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.call_end),
+            iconSize: 30,
+            onPressed: () {},
+          ),
+        ],
       ),
-      FloatingActionButton(
-        onPressed: () {
-          if (microEnabled) {
-            _cubit.disableAudio();
-          } else {
-            _cubit.enableAudio();
-          }
-        },
-        backgroundColor: microEnabled ? Colors.blueAccent : Colors.white,
-        child: Icon(
-          microEnabled ? Icons.mic : Icons.mic_off,
-          color: microEnabled ? Colors.white : Colors.red,
-        ),
-      ),
-    ];
+    );
   }
 }
