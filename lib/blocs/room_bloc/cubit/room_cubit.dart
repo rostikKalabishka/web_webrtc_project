@@ -35,6 +35,9 @@ class RoomBloc extends Cubit<RoomState> {
     try {
       await _createPeerConnection();
 
+      // Реєстрація слухачів
+      _registerPeerConnectionListeners(room);
+
       final offer = await state.peerConnection!.createOffer();
       await state.peerConnection!.setLocalDescription(offer);
 
@@ -42,9 +45,8 @@ class RoomBloc extends Cubit<RoomState> {
           await _roomRepository.createRoom(offer: offer, roomModel: room);
 
       if (state.peerConnection != null) {
-        print("Registering peer connection listeners");
+        print("PeerConnection is not null after creation");
         await enableUserMediaStream(video: true, audio: true);
-        _registerPeerConnectionListeners(roomModel);
       } else {
         print("PeerConnection is null after creation");
       }
@@ -96,6 +98,8 @@ class RoomBloc extends Cubit<RoomState> {
 
       if (sessionDescription != null) {
         await enableUserMediaStream(video: true, audio: true);
+
+        // Реєстрація слухачів
         _registerPeerConnectionListeners(room);
 
         state.localStream?.getTracks().forEach((track) {
@@ -263,28 +267,18 @@ class RoomBloc extends Cubit<RoomState> {
         }
       };
 
-      peerConnection.onAddStream = (MediaStream stream) {
-        log("onAddStream triggered with stream: ${stream.id}");
-        emit(state.copyWith(remoteStream: stream, companionShown: true));
-      };
-      print(state.remoteStream);
       peerConnection.onTrack = (event) {
         log("onTrack triggered with event: ${event.streams[0].id}");
         if (event.streams.isNotEmpty) {
-          event.streams[0]
-              .getTracks()
-              .forEach((track) => state.remoteStream?.addTrack(track));
-          // final stream = event.streams.first;
-          // print("onTrack triggered with stream: ${stream.id}");
-          // emit(state.copyWith(remoteStream: stream, companionShown: true));
+          emit(state.copyWith(
+              remoteStream: event.streams[0], companionShown: true));
         } else {
           print("No streams found in onTrack event");
         }
       };
 
-      // Проверка слушателей
+      // Логування слухачів
       log('onIceCandidate: ${peerConnection.onIceCandidate}');
-      log('onAddStream: ${peerConnection.onAddStream}');
       log('onTrack: ${peerConnection.onTrack}');
     } catch (e) {
       print("Error in _registerPeerConnectionListeners: $e");
