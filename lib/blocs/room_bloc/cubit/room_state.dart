@@ -15,6 +15,7 @@ class RoomState extends Equatable {
   final bool audioDisabled;
   final bool microMuted;
   final Object error;
+  final bool cleared;
 
   const RoomState(
       {this.roomModel,
@@ -22,6 +23,7 @@ class RoomState extends Equatable {
       this.localStream,
       this.remoteStream,
       this.peerConnection,
+      this.cleared = false,
       this.currentUserShown = false,
       this.companionShown = false,
       this.videoDisabled = false,
@@ -39,6 +41,7 @@ class RoomState extends Equatable {
         audioDisabled,
         microMuted,
         error,
+        cleared
       ];
 
   RoomState copyWith({
@@ -57,17 +60,27 @@ class RoomState extends Equatable {
     bool clearLocalStream = false,
     bool clearRemoteStream = false,
     bool clearPeerConnection = false,
+    bool clearAll = false,
   }) {
     return RoomState(
+        cleared: clearAll,
         roomModel: roomModel ?? this.roomModel,
-        localStream: localStream ?? this.localStream,
-        remoteStream: remoteStream ?? this.remoteStream,
-        peerConnection: peerConnection ?? this.peerConnection,
-        currentUserShown: currentUserShown ?? this.currentUserShown,
-        companionShown: companionShown ?? this.companionShown,
-        videoDisabled: videoDisabled ?? this.videoDisabled,
-        audioDisabled: audioDisabled ?? this.audioDisabled,
-        microMuted: microMuted ?? this.microMuted,
+        localStream: clearAll || clearLocalStream
+            ? null
+            : localStream ?? this.localStream,
+        remoteStream: clearAll || clearRemoteStream
+            ? null
+            : remoteStream ?? this.remoteStream,
+        peerConnection: clearAll || clearPeerConnection
+            ? null
+            : peerConnection ?? this.peerConnection,
+        currentUserShown:
+            clearAll ? false : (currentUserShown ?? this.currentUserShown),
+        companionShown:
+            clearAll ? false : (companionShown ?? this.companionShown),
+        videoDisabled: clearAll ? false : (videoDisabled ?? this.videoDisabled),
+        audioDisabled: clearAll ? false : (audioDisabled ?? this.audioDisabled),
+        microMuted: clearAll ? false : (microMuted ?? this.microMuted),
         error: error ?? this.error);
   }
 }

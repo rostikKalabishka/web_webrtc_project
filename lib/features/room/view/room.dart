@@ -55,7 +55,8 @@ class _RoomScreenState extends State<RoomScreen> {
       listenWhen: (prev, next) =>
           prev.localStream != next.localStream ||
           prev.remoteStream != next.remoteStream ||
-          prev.roomModel != next.roomModel,
+          prev.roomModel != next.roomModel ||
+          next.cleared,
       listener: (context, state) {
         if (state.localStream != null &&
             _localRenderer.srcObject != state.localStream) {

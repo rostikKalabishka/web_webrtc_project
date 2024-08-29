@@ -35,6 +35,19 @@ class RoomBloc extends Cubit<RoomState> {
     try {
       await _createPeerConnection();
 
+      // Initialize user media stream before creating offer
+      await enableUserMediaStream(video: true, audio: true);
+
+      if (state.localStream != null) {
+        state.localStream!.getTracks().forEach((track) {
+          state.peerConnection!.addTrack(track, state.localStream!);
+        });
+      } else {
+        emit(state.copyWith(
+            error: 'Local stream is null after enabling user media'));
+        return;
+      }
+
       final offer = await state.peerConnection!.createOffer();
       await state.peerConnection!.setLocalDescription(offer);
 
@@ -43,15 +56,10 @@ class RoomBloc extends Cubit<RoomState> {
 
       if (state.peerConnection != null) {
         print("Registering peer connection listeners");
-        await enableUserMediaStream(video: true, audio: true);
         _registerPeerConnectionListeners(roomModel);
       } else {
         print("PeerConnection is null after creation");
       }
-
-      state.localStream?.getTracks().forEach((track) {
-        state.peerConnection!.addTrack(track, state.localStream!);
-      });
 
       emit(state.copyWith(
         roomModel: roomModel,
@@ -64,9 +72,9 @@ class RoomBloc extends Cubit<RoomState> {
           if (answer != null) {
             await state.peerConnection?.setRemoteDescription(answer);
           } else {
-            // if (state.remoteStream != null) {
-            //   emit(state.copyWith(clearAll: true));
-            // }
+            if (state.remoteStream != null) {
+              emit(state.copyWith(clearAll: true));
+            }
           }
         }),
         _roomRepository
@@ -98,9 +106,15 @@ class RoomBloc extends Cubit<RoomState> {
         await enableUserMediaStream(video: true, audio: true);
         _registerPeerConnectionListeners(room);
 
-        state.localStream?.getTracks().forEach((track) {
-          state.peerConnection!.addTrack(track, state.localStream!);
-        });
+        if (state.localStream != null) {
+          state.localStream!.getTracks().forEach((track) {
+            state.peerConnection!.addTrack(track, state.localStream!);
+          });
+        } else {
+          emit(state.copyWith(
+              error: 'Local stream is null after enabling user media'));
+          return;
+        }
 
         await state.peerConnection!.setRemoteDescription(sessionDescription);
         final answer = await state.peerConnection!.createAnswer();
@@ -120,7 +134,7 @@ class RoomBloc extends Cubit<RoomState> {
               .getRoomDataStream(roomId: room.id)
               .listen((answer) async {
             if (answer == null) {
-              // emit(state.copyWith(clearAll: true));
+              emit(state.copyWith(clearAll: true));
             }
           })
         ]);
@@ -264,19 +278,19 @@ class RoomBloc extends Cubit<RoomState> {
       };
 
       peerConnection.onAddStream = (MediaStream stream) {
-        print("onAddStream triggered with stream: ${stream.id}");
+        log("onAddStream triggered with stream: ${stream.id}");
         emit(state.copyWith(remoteStream: stream, companionShown: true));
       };
       print(state.remoteStream);
       peerConnection.onTrack = (event) {
-        print("onTrack triggered with event: ${event}");
-        if (event.streams.isNotEmpty) {
+        log("onTrack triggered with event: ${event.streams[0].id}");
+        if (event.streams.isNotEmpty && state.remoteStream != null) {
           event.streams[0]
               .getTracks()
               .forEach((track) => state.remoteStream?.addTrack(track));
-          // final stream = event.streams.first;
-          // print("onTrack triggered with stream: ${stream.id}");
-          // emit(state.copyWith(remoteStream: stream, companionShown: true));
+          // Emit new state with updated remote stream
+          emit(state.copyWith(
+              remoteStream: event.streams[0], companionShown: true));
         } else {
           print("No streams found in onTrack event");
         }
