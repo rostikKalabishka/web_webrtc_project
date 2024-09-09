@@ -236,6 +236,12 @@ class RoomBloc extends Cubit<RoomState> {
     try {
       final peerConnection = await createPeerConnection(_configuration);
       print("PeerConnection created successfully");
+
+      // Очищення старих треків
+      state.remoteStream?.getTracks().forEach((track) {
+        track.stop();
+      });
+
       emit(state.copyWith(peerConnection: peerConnection));
       print(state.peerConnection);
     } catch (e) {
@@ -270,14 +276,19 @@ class RoomBloc extends Cubit<RoomState> {
       peerConnection.onTrack = (event) {
         log("onTrack triggered with event: ${event.streams[0].id}");
         if (event.streams.isNotEmpty) {
-          emit(state.copyWith(
-              remoteStream: event.streams[0], companionShown: true));
+          final stream = event.streams[0];
+          log("Adding stream: ${stream.id}");
+
+          // Оновлення стану, перевірте наявність потоку та очистіть старі треки
+          if (state.remoteStream == null ||
+              state.remoteStream!.id != stream.id) {
+            emit(state.copyWith(remoteStream: stream, companionShown: true));
+          }
         } else {
           print("No streams found in onTrack event");
         }
       };
 
-      // Логування слухачів
       log('onIceCandidate: ${peerConnection.onIceCandidate}');
       log('onTrack: ${peerConnection.onTrack}');
     } catch (e) {
